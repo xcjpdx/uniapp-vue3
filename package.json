@@ -1,0 +1,10 @@
+{
+  "dependencies": {
+    "clipboard": "^2.0.11",
+    "dayjs": "^1.11.9",
+    "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^3.2.1",
+    "uview-plus": "^3.1.36",
+    "weixin-js-sdk": "^1.6.0"
+  }
+}
