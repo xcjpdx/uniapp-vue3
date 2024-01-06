@@ -1,1 +1,1 @@
-使用 vue3 和 uniapp 进行项目开发
+使用 vue3、pinia、uview、uniapp 进行项目开发
