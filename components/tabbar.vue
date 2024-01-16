@@ -1,5 +1,5 @@
 <template>
-	<view class="tabbar-box">
+	<view class="tabbar-box" :style="{ 'padding-bottom': deviceType === 'android' ? '40rpx' : '' }">
 		<view
 			class="tabbar-box-item"
 			v-for="(item, index) in tabbarList"
@@ -16,6 +16,10 @@
 	import { ref, onMounted, computed, watchEffect } from 'vue';
 	import { onLoad } from '@dcloudio/uni-app';
 
+	let deviceType = ref('');
+	onMounted(() => {
+		deviceType.value = uni.getSystemInfoSync().osName;
+	});
 	const props = defineProps({
 		type: {
 			type: String,
