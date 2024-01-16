@@ -1,8 +1,13 @@
 <template>
 	<view class="tabbar-box">
-		<view class="tabbar-box-item" v-for="item in tabbarList" @click="goPage(item)">
-			<image :src="type === item.type ? item.activeUrl : item.url"></image>
-			<text :style="{ color: type === item.type ? '#2D99A1' : '' }">{{ item.title }}</text>
+		<view
+			class="tabbar-box-item"
+			v-for="(item, index) in tabbarList"
+			@click="goPage(item)"
+			:key="index"
+		>
+			<image :src="props.type === item.type ? item.activeUrl : item.url"></image>
+			<text :style="{ color: props.type === item.type ? '#2D99A1' : '' }">{{ item.title }}</text>
 		</view>
 	</view>
 </template>
@@ -11,7 +16,7 @@
 	import { ref, onMounted, computed, watchEffect } from 'vue';
 	import { onLoad } from '@dcloudio/uni-app';
 
-	defineProps({
+	const props = defineProps({
 		type: {
 			type: String,
 			default: 'home',
@@ -22,20 +27,35 @@
 		{
 			title: '首页',
 			type: 'home',
-			path: '/pages/home/index',
-			url: '/static/image/tabbar/home-not-active.png',
-			activeUrl: '/static/image/tabbar/home-active.png',
+			path: '/pages/index/index',
+			url: '/static/tabbar/1-0.png',
+			activeUrl: '/static/tabbar/1-1.png',
+		},
+		{
+			title: '定制',
+			type: 'customization',
+			path: '/pages/index/productCustomization',
+			url: '/static/tabbar/2-0.png',
+			activeUrl: '/static/tabbar/2-1.png',
+		},
+		{
+			title: '购物车',
+			type: 'shoppingCart',
+			path: '/pages/shoppingCart/index',
+			url: '/static/tabbar/4-0.png',
+			activeUrl: '/static/tabbar/4-1.png',
 		},
 		{
 			title: '我的',
-			type: 'user',
-			path: '/pages/user/index',
-			url: '/static/image/tabbar/user-not-active.png',
-			activeUrl: '/static/image/tabbar/user-active.png',
+			type: 'userCenter',
+			path: '/pages/userCenter/index',
+			url: '/static/tabbar/3-0.png',
+			activeUrl: '/static/tabbar/3-1.png',
 		},
 	]);
 
 	function goPage(item) {
+		if (item.type == props.type) return;
 		uni.reLaunch({
 			url: item.path,
 		});
