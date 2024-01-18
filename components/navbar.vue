@@ -6,7 +6,7 @@
 		:titleStyle="{ color: props.color, 'font-size': '34rpx', 'font-weight': 400 }"
 	>
 		<template #left>
-			<view class="u-nav-slot">
+			<view class="u-nav-slot" v-if="props.type != 3">
 				<u-icon
 					name="arrow-left"
 					:color="props.color"
