@@ -1,4 +1,3 @@
-<!-- 多种头部导航栏 -->
 <template>
 	<u-navbar
 		:placeholder="props.placeholder"
