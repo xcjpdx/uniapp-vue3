@@ -1,66 +1,31 @@
 <!-- 多种头部导航栏 -->
 <template>
-	<!-- 0.有返回和回到首页 -->
-	<template v-if="props.type == 0">
-		<u-navbar
-			:placeholder="props.placeholder"
-			:bgColor="props.bgColor"
-			:title="props.title"
-			:titleStyle="{ color: props.color, 'font-size': '34rpx', 'font-weight': 400 }"
-		>
-			<template #left>
-				<view class="u-nav-slot2">
-					<u-icon name="arrow-left" :color="props.color" size="40" @click="goBack"></u-icon>
-					<view class="nav-line"></view>
-					<u-icon name="home" :color="props.color" size="40" @click="goHome"></u-icon>
-				</view>
-			</template>
-		</u-navbar>
-	</template>
-	<!-- 1.只有返回 -->
-	<template v-if="props.type == 1">
-		<u-navbar
-			:placeholder="props.placeholder"
-			:bgColor="props.bgColor"
-			autoBack
-			:title="props.title"
-			:titleStyle="{ color: props.color, 'font-size': '34rpx', 'font-weight': 400 }"
-		>
-			<template #left>
-				<view class="u-nav-slot1">
-					<view class="nav-box">
-						<u-icon name="arrow-left" size="40"></u-icon>
-					</view>
-				</view>
-			</template>
-		</u-navbar>
-	</template>
-	<!-- 2.只有回到首页 -->
-	<template v-if="props.type == 2">
-		<u-navbar
-			:placeholder="props.placeholder"
-			:bgColor="props.bgColor"
-			:title="props.title"
-			:titleStyle="{ color: props.color, 'font-size': '34rpx', 'font-weight': 400 }"
-		>
-			<template #left>
-				<view class="u-nav-slot2">
-					<u-icon name="home" :color="props.color" size="40" @click="goHome"></u-icon>
-				</view>
-			</template>
-		</u-navbar>
-	</template>
-	<!-- 3.什么都没有 -->
-	<template v-if="props.type == 3">
-		<u-navbar
-			leftIconSize="0"
-			:placeholder="props.placeholder"
-			:bgColor="props.bgColor"
-			:title="props.title"
-			:titleStyle="{ color: props.color, 'font-size': '34rpx', 'font-weight': 400 }"
-		>
-		</u-navbar>
-	</template>
+	<u-navbar
+		:placeholder="props.placeholder"
+		:bgColor="props.bgColor"
+		:title="props.title"
+		:titleStyle="{ color: props.color, 'font-size': '34rpx', 'font-weight': 400 }"
+	>
+		<template #left>
+			<view class="u-nav-slot">
+				<u-icon
+					name="arrow-left"
+					:color="props.color"
+					size="40"
+					@click="goBack"
+					v-if="props.type == 0 || props.type == 1"
+				></u-icon>
+				<view class="nav-line" v-if="props.type == 0"></view>
+				<u-icon
+					name="home"
+					:color="props.color"
+					size="40"
+					@click="goHome"
+					v-if="props.type == 0 || props.type == 2"
+				></u-icon>
+			</view>
+		</template>
+	</u-navbar>
 </template>
 <script setup>
 	import { ref, onMounted, computed, watchEffect } from 'vue';
@@ -68,7 +33,7 @@
 	const props = defineProps({
 		type: {
 			type: String,
-			default: '0',
+			default: '0', // 0.有返回和回到首页 1.只有返回 2.只有回到首页 3.什么都没有
 		},
 		title: {
 			type: String,
@@ -109,16 +74,7 @@
 </script>
 
 <style lang="scss" scoped>
-	.u-nav-slot1 {
-		.nav-box {
-			width: 63rpx;
-			height: 63rpx;
-			border: 1px solid #d1d1d1;
-			border-radius: 50%;
-			@extend %c-box-center;
-		}
-	}
-	.u-nav-slot2 {
+	.u-nav-slot {
 		@extend %c-box-center;
 		width: 173rpx;
 		height: 66rpx;
