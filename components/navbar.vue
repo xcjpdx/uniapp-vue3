@@ -56,7 +56,6 @@
 			leftIconSize="0"
 			:placeholder="props.placeholder"
 			:bgColor="props.bgColor"
-			autoBack
 			:title="props.title"
 			:titleStyle="{ color: props.color, 'font-size': '34rpx', 'font-weight': 400 }"
 		>
