@@ -76,8 +76,7 @@
 <style lang="scss" scoped>
 	.u-nav-slot {
 		@extend %c-box-center;
-		width: 173rpx;
-		height: 66rpx;
+		padding: 10rpx 40rpx;
 		border: 2rpx solid #d1d1d1;
 		border-radius: 32rpx;
 		.nav-line {
