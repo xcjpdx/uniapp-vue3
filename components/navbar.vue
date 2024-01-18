@@ -53,6 +53,7 @@
 	<!-- 3.什么都没有 -->
 	<template v-if="props.type == 3">
 		<u-navbar
+			leftIconSize="0"
 			:placeholder="props.placeholder"
 			:bgColor="props.bgColor"
 			autoBack
