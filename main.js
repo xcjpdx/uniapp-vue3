@@ -25,14 +25,20 @@ app.$mount();
 import { createSSRApp } from 'vue';
 export function createApp() {
 	const app = createSSRApp(App);
+
 	app.config.globalProperties.$url = getImg;
+
+	// uview-plus
 	app.use(uviewPlus);
+
 	// pinia
 	const pinia = createPinia();
 	pinia.use(piniaPluginPersistedstate);
 	app.use(pinia);
+
 	// dayjs
 	app.config.globalProperties.$dayjs = dayjs;
+
 	// 如此配置即可
 	uni.$u.config.unit = 'rpx';
 
