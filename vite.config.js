@@ -12,6 +12,7 @@ export default defineConfig({
 	// 		'/api': {
 	// 			target: BASE_URL,
 	// 			changeOrigin: true,
+	// 			secure: false,
 	// 			rewrite: (path) => path.replace(/^\/api/, ''),
 	// 		},
 	// 	},
