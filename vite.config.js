@@ -2,7 +2,6 @@
 
 import { defineConfig } from 'vite';
 import uni from '@dcloudio/vite-plugin-uni';
-import { BASE_URL } from './constants';
 
 export default defineConfig({
 	plugins: [uni()],
@@ -10,7 +9,7 @@ export default defineConfig({
 	// server: {
 	// 	proxy: {
 	// 		'/api': {
-	// 			target: BASE_URL,
+	// 			target: '请求地址',
 	// 			changeOrigin: true,
 	// 			secure: false,
 	// 			rewrite: (path) => path.replace(/^\/api/, ''),
