@@ -4,7 +4,8 @@
 		"custom": {
 			"^u--(.*)": "uview-plus/components/u-$1/u-$1.vue",
 			"^up-(.*)": "uview-plus/components/u-$1/u-$1.vue",
-			"^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue"
+			"^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue",
+			"navbar": "./components/navbar.vue"
 		}
 	},
 	"pages": [
@@ -36,7 +37,6 @@
 		"navigationBarBackgroundColor": "#fff",
 		"backgroundColor": "#F6F6F6"
 	},
-	"uniIdRouter": {},
 	"tabBar": {
 		"color": "#999999",
 		"selectedColor": "#000",
