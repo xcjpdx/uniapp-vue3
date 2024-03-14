@@ -5,7 +5,8 @@
 			"^u--(.*)": "uview-plus/components/u-$1/u-$1.vue",
 			"^up-(.*)": "uview-plus/components/u-$1/u-$1.vue",
 			"^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue",
-			"navbar": "./components/navbar.vue"
+			"myNavbar": "./components/myNavbar/myNavbar.vue",
+			"myTabbar": "./components/myTabbar/myTabbar.vue"
 		}
 	},
 	"pages": [
@@ -13,7 +14,7 @@
 			"path": "pages/home/index",
 			"style": {
 				"navigationBarTitleText": "首页",
-				"navigationStyle": "default"
+				"navigationStyle": "custom"
 			}
 		},
 		{
