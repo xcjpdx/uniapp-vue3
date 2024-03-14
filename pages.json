@@ -31,6 +31,7 @@
 			}
 		}
 	],
+	"subPackages": [],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "",
