@@ -2,6 +2,10 @@ node_modules
 /node_modules
 /node_modules/*
 
+uni_modules
+/uni_modules
+/uni_modules/*
+
 unpackage
 /unpackage
 /unpackage/*
