@@ -7,9 +7,9 @@
 	>
 		<template #left>
 			<view class="u-nav-slot" v-if="props.type == 0">
-				<u-icon name="arrow-left" :color="props.color" size="40" @click="goBack"></u-icon>
+				<u-icon name="arrow-left" color="#000" size="40" @click="goBack"></u-icon>
 				<view class="nav-line" v-if="props.type == 0"></view>
-				<u-icon name="home" :color="props.color" size="40" @click="goHome"></u-icon>
+				<u-icon name="home" color="#000" size="40" @click="goHome"></u-icon>
 			</view>
 			<view class="u-nav-slot-back" v-if="props.type == 1">
 				<u-icon name="arrow-left" color="#fff" size="30" @click="goBack"></u-icon>
