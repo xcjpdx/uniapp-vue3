@@ -6,22 +6,16 @@
 		:titleStyle="{ color: props.color, 'font-size': '34rpx', 'font-weight': 400 }"
 	>
 		<template #left>
-			<view class="u-nav-slot" v-if="props.type != 3">
-				<u-icon
-					name="arrow-left"
-					:color="props.color"
-					size="40"
-					@click="goBack"
-					v-if="props.type == 0 || props.type == 1"
-				></u-icon>
+			<view class="u-nav-slot" v-if="props.type == 0">
+				<u-icon name="arrow-left" :color="props.color" size="40" @click="goBack"></u-icon>
 				<view class="nav-line" v-if="props.type == 0"></view>
-				<u-icon
-					name="home"
-					:color="props.color"
-					size="40"
-					@click="goHome"
-					v-if="props.type == 0 || props.type == 2"
-				></u-icon>
+				<u-icon name="home" :color="props.color" size="40" @click="goHome"></u-icon>
+			</view>
+			<view class="u-nav-slot-back" v-if="props.type == 1">
+				<u-icon name="arrow-left" color="#fff" size="30" @click="goBack"></u-icon>
+			</view>
+			<view class="u-nav-slot-home" v-if="props.type == 2">
+				<u-icon name="home-fill" color="#fff" size="30" @click="goHome"></u-icon>
 			</view>
 		</template>
 	</u-navbar>
@@ -44,7 +38,7 @@
 		},
 		color: {
 			type: String,
-			default: '#3F3F40',
+			default: '#171717',
 		},
 		placeholder: {
 			type: Boolean,
@@ -75,14 +69,22 @@
 <style lang="scss" scoped>
 	.u-nav-slot {
 		@extend %c-box-center;
-		padding: 10rpx 40rpx;
+		padding: 10rpx 30rpx;
 		border: 2rpx solid #d1d1d1;
 		border-radius: 32rpx;
 		.nav-line {
 			width: 2rpx;
 			height: 40rpx;
-			background: #fff;
+			background: #afafaf;
 			margin: 0 20rpx;
 		}
+	}
+	.u-nav-slot-back,
+	.u-nav-slot-home {
+		width: 63rpx;
+		height: 63rpx;
+		background: rgba(0, 0, 0, 0.5);
+		border-radius: 50%;
+		@extend %c-box-center;
 	}
 </style>
