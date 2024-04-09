@@ -10,7 +10,12 @@
 			<text :style="{ color: props.type === item.type ? '#2D99A1' : '' }">{{ item.title }}</text>
 		</view>
 	</view>
-	<div class="mask-box" v-if="isMask" :style="{ opacity: markOpacity }"> </div>
+	<div class="mask-box" v-if="isMask" :style="{ opacity: markOpacity }">
+		<image
+			src="https://i0.hdslb.com/bfs/article/66fc6b91021d6563b0396fc15a65b0c6e78afe81.gif@!web-article-pic.avif"
+			mode="aspectFit"
+		/>
+	</div>
 </template>
 
 <script setup>
@@ -26,7 +31,7 @@
 			} else {
 				markOpacity.value -= 0.1;
 			}
-		}, 20);
+		}, 50);
 	});
 
 	let isMask = ref(true);
@@ -110,8 +115,14 @@
 		width: 100%;
 		height: 100%;
 		z-index: 999;
-		// background: #ffffff;
-		background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-		transition: all 0.5s;
+		background: rgba(0, 0, 0, 0.5);
+		// background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		image {
+			height: 270px;
+		}
+		transition: all 0.3s;
 	}
 </style>
