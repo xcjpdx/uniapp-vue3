@@ -10,11 +10,27 @@
 			<text :style="{ color: props.type === item.type ? '#2D99A1' : '' }">{{ item.title }}</text>
 		</view>
 	</view>
+	<div class="mask-box" v-if="isMask" :style="{ opacity: markOpacity }"> </div>
 </template>
 
 <script setup>
 	import { ref, onMounted, computed, watchEffect } from 'vue';
-	import { onLoad } from '@dcloudio/uni-app';
+	import { onLoad, onReady } from '@dcloudio/uni-app';
+
+	let time = null;
+	onReady(() => {
+		time = setInterval(() => {
+			if (markOpacity.value <= 0) {
+				clearInterval(time);
+				isMask.value = false;
+			} else {
+				markOpacity.value -= 0.1;
+			}
+		}, 20);
+	});
+
+	let isMask = ref(true);
+	let markOpacity = ref(1);
 
 	let deviceType = ref('');
 	onMounted(() => {
@@ -25,36 +41,26 @@
 			type: String,
 			default: 'home',
 		},
+		isMark: {
+			type: Boolean,
+			default: true,
+		},
 	});
 
 	let tabbarList = ref([
 		{
 			title: '首页',
 			type: 'home',
-			path: '/pages/index/index',
-			url: '/static/tabbar/1-0.png',
-			activeUrl: '/static/tabbar/1-1.png',
-		},
-		{
-			title: '定制',
-			type: 'customization',
-			path: '/pages/index/productCustomization',
-			url: '/static/tabbar/2-0.png',
-			activeUrl: '/static/tabbar/2-1.png',
-		},
-		{
-			title: '购物车',
-			type: 'shoppingCart',
-			path: '/pages/shoppingCart/index',
-			url: '/static/tabbar/4-0.png',
-			activeUrl: '/static/tabbar/4-1.png',
+			path: '/pages/home/index',
+			url: '/static/image/tabbar/home-not-active.png',
+			activeUrl: '/static/image/tabbar/home-active.png',
 		},
 		{
 			title: '我的',
-			type: 'userCenter',
-			path: '/pages/userCenter/index',
-			url: '/static/tabbar/3-0.png',
-			activeUrl: '/static/tabbar/3-1.png',
+			type: 'user',
+			path: '/pages/user/index',
+			url: '/static/image/tabbar/user-not-active.png',
+			activeUrl: '/static/image/tabbar/user-active.png',
 		},
 	]);
 
@@ -96,5 +102,16 @@
 			font-weight: 500;
 			color: #999999;
 		}
+	}
+	.mask-box {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 999;
+		// background: #ffffff;
+		background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+		transition: all 0.5s;
 	}
 </style>
