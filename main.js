@@ -9,6 +9,9 @@ import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn'; // 导入本地化语言
 dayjs.locale('zh-cn'); // 使用本地化语言
+// 公共组件
+import myNavbar from './components/myNavbar.vue';
+import myTabbar from './components/myTabbar.vue';
 
 // #ifndef VUE3
 import Vue from 'vue';
@@ -36,8 +39,9 @@ export function createApp() {
 	pinia.use(piniaPluginPersistedstate);
 	app.use(pinia);
 
-	// dayjs
-	app.config.globalProperties.$dayjs = dayjs;
+	// 公共组件
+	app.component('myNavbar', myNavbar);
+	app.component('myTabbar', myTabbar);
 
 	// 如此配置即可
 	uni.$u.config.unit = 'rpx';
