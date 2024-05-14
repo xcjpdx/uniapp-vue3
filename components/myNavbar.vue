@@ -8,7 +8,7 @@
 		<template #left>
 			<view class="u-nav-slot" v-if="props.type == 0">
 				<u-icon name="arrow-left" color="#000" size="40" @click="goBack"></u-icon>
-				<view class="nav-line" v-if="props.type == 0"></view>
+				<view class="nav-line"></view>
 				<u-icon name="home" color="#000" size="40" @click="goHome"></u-icon>
 			</view>
 			<view class="u-nav-slot-back" v-if="props.type == 1">
@@ -47,9 +47,7 @@
 	});
 	// 返回上一页
 	function goBack() {
-		// 获取页面栈
 		const pages = getCurrentPages();
-		// console.log('页面栈的长度', pages.length);
 		if (pages.length == 1) {
 			uni.reLaunch({
 				url: '/pages/home/index',
@@ -71,6 +69,7 @@
 		@extend %c-box-center;
 		padding: 10rpx 30rpx;
 		border: 2rpx solid #d1d1d1;
+		background: #fff;
 		border-radius: 32rpx;
 		.nav-line {
 			width: 2rpx;

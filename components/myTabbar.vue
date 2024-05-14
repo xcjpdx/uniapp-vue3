@@ -10,46 +10,33 @@
 			<text :style="{ color: props.type === item.type ? '#2D99A1' : '' }">{{ item.title }}</text>
 		</view>
 	</view>
-	<div class="mask-box" v-if="isMask" :style="{ opacity: markOpacity }">
-		<image
-			src="https://i0.hdslb.com/bfs/article/66fc6b91021d6563b0396fc15a65b0c6e78afe81.gif@!web-article-pic.avif"
-			mode="aspectFit"
-		/>
-	</div>
 </template>
 
 <script setup>
-	import { ref, onMounted, computed, watchEffect } from 'vue';
+	import { ref, onMounted, getCurrentInstance } from 'vue';
 	import { onLoad, onReady } from '@dcloudio/uni-app';
+	const { proxy } = getCurrentInstance();
+	let instance = proxy;
 
-	let time = null;
-	onReady(() => {
-		time = setInterval(() => {
-			if (markOpacity.value <= 0) {
-				clearInterval(time);
-				isMask.value = false;
-			} else {
-				markOpacity.value -= 0.1;
-			}
-		}, 50);
-	});
-
-	let isMask = ref(true);
-	let markOpacity = ref(1);
-
-	let deviceType = ref('');
-	onMounted(() => {
-		deviceType.value = uni.getSystemInfoSync().osName;
-	});
 	const props = defineProps({
 		type: {
 			type: String,
 			default: 'home',
 		},
-		isMark: {
-			type: Boolean,
-			default: true,
-		},
+	});
+	const emit = defineEmits(['tabbarHeight']);
+
+	let deviceType = ref('');
+	onMounted(() => {
+		deviceType.value = uni.getSystemInfoSync().osName;
+		// 获取 tabbar-box 的高度
+		let query = uni.createSelectorQuery().in(instance);
+		query
+			.select('.tabbar-box')
+			.boundingClientRect((data) => {
+				emit('tabbarHeight', data.height + 'px');
+			})
+			.exec();
 	});
 
 	let tabbarList = ref([
@@ -71,7 +58,7 @@
 
 	function goPage(item) {
 		if (item.type == props.type) return;
-		uni.reLaunch({
+		uni.switchTab({
 			url: item.path,
 		});
 	}
@@ -88,6 +75,7 @@
 		padding-bottom: env(safe-area-inset-bottom);
 		width: 100%;
 		background: #fff;
+		box-shadow: 0rpx -1rpx 21rpx 0rpx rgba(131, 128, 127, 0.1);
 		border-radius: 20rpx;
 		display: flex;
 		justify-content: space-between;
@@ -107,22 +95,5 @@
 			font-weight: 500;
 			color: #999999;
 		}
-	}
-	.mask-box {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 999;
-		background: rgba(0, 0, 0, 0.5);
-		// background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		image {
-			height: 270px;
-		}
-		transition: all 0.3s;
 	}
 </style>
