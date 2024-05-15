@@ -8,11 +8,11 @@ export default defineConfig({
 	// H5服务器代理 解决跨域问题
 	// server: {
 	// 	proxy: {
-	// 		'/api': {
+	// 		'/proxy': {
 	// 			target: '请求地址',
 	// 			changeOrigin: true,
 	// 			secure: false,
-	// 			rewrite: (path) => path.replace(/^\/api/, ''),
+	// 			rewrite: (path) => path.replace(/^\/proxy/, ''),
 	// 		},
 	// 	},
 	// },

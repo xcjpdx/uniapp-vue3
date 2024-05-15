@@ -5,7 +5,7 @@ import { BASE_UPLOAD_URL } from '@/constants.js';
 export const $upload_transfer = (url) => {
 	return new Promise((resolve, reject) => {
 		let a = uni.uploadFile({
-			url: `${BASE_UPLOAD_URL}upload/transfer`,
+			url: `${BASE_UPLOAD_URL}`,
 			filePath: url,
 			name: 'file',
 			formData: {},
