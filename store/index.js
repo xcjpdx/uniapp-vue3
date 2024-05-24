@@ -5,10 +5,8 @@ export const useDataStore = defineStore(
 	() => {
 		let data = ref(0); // 数据
 
-		// 函数
-		async function changeData(data) {
-			data.value = data.value + 1;
-			console.log('函数');
+		async function changeData() {
+			data.value++;
 		}
 
 		return {
@@ -22,8 +20,8 @@ export const useDataStore = defineStore(
 );
 
 /* 页面使用方法:
-import { useDataStore } from '../../store/index'; // 引入仓库
-let songData = useDataStore(); // 声明并拿到仓库示例
-songData.data // 访问仓库的数据
-songData.changeData() // 调用仓库的函数
+import { useDataStore } from '@/store/index.js'; // 引入仓库
+const dataStore = useDataStore(); // 声明并拿到仓库示例
+dataStore.data // 访问仓库的数据
+dataStore.changeData() // 调用仓库的函数
 */
