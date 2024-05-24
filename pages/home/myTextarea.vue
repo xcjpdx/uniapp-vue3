@@ -28,6 +28,10 @@
 			type: Object,
 			default: {},
 		},
+		textareaBoxPadding: {
+			type: String,
+			default: '40rpx',
+		},
 		textareaStyle: {
 			type: Object,
 			default: {},
@@ -94,7 +98,24 @@
 				}
 			}
 			textareaBoxStyle.value.minHeight = props.height;
-			textareaStyle.value.minHeight = props.height;
+			// 处理textareaStyle的min-height
+			let result = extractNumberAndUnit(props.textareaBoxPadding);
+			let heightResult = extractNumberAndUnit(props.height);
+			let minHeight = '';
+			if (heightResult.unit == 'rpx') {
+				if (result.unit == 'rpx') {
+					minHeight = heightResult.number - result.number + 'rpx';
+				} else {
+					minHeight = heightResult.number - result.number * 2 + 'rpx';
+				}
+			} else {
+				if (result.unit == 'rpx') {
+					minHeight = heightResult.number - result.number / 2 + 'px';
+				} else {
+					minHeight = heightResult.number - result.number + 'px';
+				}
+			}
+			textareaStyle.value.minHeight = minHeight;
 		} else {
 			textareaBoxStyle.value.height = props.height;
 			textareaStyle.value.height = '100%';
@@ -104,6 +125,16 @@
 			border: '1rpx solid #97CBE8',
 			...props.focusStyle,
 		};
+	}
+	function extractNumberAndUnit(inputString) {
+		const match = inputString.match(/(\d+)([a-zA-Z]+)/);
+		if (match) {
+			const number = match[1] * 1;
+			const unit = match[2];
+			return { number, unit };
+		} else {
+			return { number: null, unit: null };
+		}
 	}
 	let textareaBoxStyle = ref({});
 	let textareaStyle = ref({});

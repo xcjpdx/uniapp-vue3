@@ -221,7 +221,7 @@
 						resolve();
 					})
 					.exec();
-			}, 280);
+			}, 300);
 		});
 	}
 	let moveX = 0;
@@ -291,7 +291,7 @@
 		position: relative;
 		.tab {
 			position: relative;
-			transition: all 0.3s;
+			transition: all 0.6s;
 			white-space: nowrap;
 			.tab-line {
 				position: absolute;
@@ -306,7 +306,7 @@
 		.tabs-line {
 			position: absolute;
 			left: 0;
-			transition: all 0.3s;
+			transition: all 0.2s;
 		}
 	}
 </style>

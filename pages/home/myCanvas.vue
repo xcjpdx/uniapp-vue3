@@ -47,12 +47,8 @@
 
 	onMounted(async () => {
 		uni.showLoading({ title: '绘制中...' });
-		drawArr.value = JSON.parse(JSON.stringify(props.drawArr));
-		canvansWidth.value = props.width / 2;
-		canvansHeight.value = props.height / 2;
-		ctx = uni.createCanvasContext('myCanvas', example);
-		handleData();
-		await init();
+		init();
+		await startDrawing();
 		canvasImageUrl.value = await getCanvasImageUrl();
 		emit('canvasDrawComplete', canvasImageUrl.value);
 		uni.hideLoading();
@@ -63,6 +59,15 @@
 	let canvansHeight = ref(0); // 画布高度
 	let ctx = null; // 画布
 	let canvasImageUrl = ref(''); // 生成的图片路径
+
+	// 初始化
+	function init() {
+		drawArr.value = JSON.parse(JSON.stringify(props.drawArr));
+		canvansWidth.value = props.width / 2;
+		canvansHeight.value = props.height / 2;
+		ctx = uni.createCanvasContext('myCanvas', example);
+		handleData();
+	}
 
 	// 处理数据
 	function handleData() {
@@ -93,6 +98,9 @@
 					element.drawOptions.fontSize = element.drawOptions.fontSize / 2 || 16;
 					element.drawOptions.maxLine = element.drawOptions.maxLine || 1;
 					element.drawOptions.lineHeight = element.drawOptions.lineHeight || 1.2;
+					element.drawOptions.italic = element.drawOptions.italic ? 'italic' : 'normal';
+					element.drawOptions.bold = element.drawOptions.bold ? 'bold' : 'normal';
+					element.drawOptions.fontFamily = element.drawOptions.fontFamily || 'PingFang SC';
 					element.drawOptions.maxWidth = element.drawOptions.maxWidth / 2 || canvansWidth.value;
 					break;
 			}
@@ -174,8 +182,8 @@
 		return y;
 	}
 
-	// 初始化
-	async function init() {
+	// 开始绘制
+	async function startDrawing() {
 		for (let index = 0; index < drawArr.value.length; index++) {
 			const element = drawArr.value[index];
 			await draw(element);
@@ -324,8 +332,21 @@
 	// 绘制文字
 	function drawText(data) {
 		ctx.save();
-		let { text, maxLine, maxWidth, type, fontSize, lineHeight, fillStyle, strokeStyle } =
-			data.drawOptions;
+		let {
+			text,
+			maxLine,
+			maxWidth,
+			type,
+			fontSize,
+			lineHeight,
+			fillStyle,
+			strokeStyle,
+			italic,
+			bold,
+			fontFamily,
+		} = data.drawOptions;
+		ctx.font = `${italic} ${bold} ${fontSize}px ${fontFamily}`;
+		// 兼容部分iOS设备字号不生效问题
 		ctx.setFontSize(fontSize);
 
 		data.drawOptions.x = getTextX(data.drawOptions);
@@ -434,20 +455,22 @@
 	// 下载图片
 	function getCanvasImageUrl() {
 		return new Promise((resolve, reject) => {
-			uni.canvasToTempFilePath(
-				{
-					canvasId: 'myCanvas',
-					success: (res) => {
-						// console.log('转换图片成功', res.tempFilePath);
-						resolve(res.tempFilePath);
+			setTimeout(() => {
+				uni.canvasToTempFilePath(
+					{
+						canvasId: 'myCanvas',
+						success: (res) => {
+							// console.log('转换图片成功', res.tempFilePath);
+							resolve(res.tempFilePath);
+						},
+						fail: (err) => {
+							console.error('转换图片失败', err);
+							reject(err);
+						},
 					},
-					fail: (err) => {
-						console.error('转换图片失败', err);
-						reject(err);
-					},
-				},
-				example
-			);
+					example
+				);
+			}, 300);
 		});
 	}
 </script>
