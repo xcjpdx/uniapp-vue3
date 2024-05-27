@@ -305,23 +305,12 @@
 		ctx.restore();
 	}
 
-	// 绘制头像(背景是一个圆)
+	// 绘制头像
 	function drawAvatar(data, url) {
 		ctx.save();
-		let { x, y, width, height, radius, type, fillStyle, strokeStyle } = data.drawOptions;
+		let { x, y, width, height, radius } = data.drawOptions;
 		// 绘制背景圆
-		switch (type) {
-			case 'fill':
-				ctx.fillStyle = fillStyle;
-				ctx.arc(x, y, radius, 0, Math.PI * 2);
-				ctx.fill();
-				break;
-			case 'stroke':
-				ctx.strokeStyle = strokeStyle;
-				ctx.arc(x, y, radius, 0, Math.PI * 2);
-				ctx.stroke();
-				break;
-		}
+		ctx.arc(x, y, radius, 0, Math.PI * 2);
 		ctx.clip();
 		// 绘制头像图片
 		ctx.drawImage(url, x - radius, y - radius, width, height);
@@ -470,7 +459,7 @@
 					},
 					example
 				);
-			}, 300);
+			}, 500);
 		});
 	}
 </script>
