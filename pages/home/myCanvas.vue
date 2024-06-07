@@ -367,10 +367,11 @@
 		let textStr = '';
 		let textArr = [];
 		for (let index = 0; index < text.length; index++) {
-			if (textArr.length > maxLine) break;
-			const t = text[index];
-			rowLength += ctx.measureText(t).width;
+			if (textArr.length == maxLine) break;
+			let t = text[index];
+			let tWidth = ctx.measureText(t).width;
 			textStr += t;
+			rowLength += tWidth;
 			if (rowLength == maxWidth) {
 				textArr.push(textStr);
 				textStr = '';
@@ -378,8 +379,8 @@
 			} else if (rowLength > maxWidth) {
 				textStr = textStr.slice(0, -1);
 				textArr.push(textStr);
-				textStr = '';
-				rowLength = 0;
+				textStr = t;
+				rowLength = tWidth;
 			}
 		}
 		textArr.push(textStr);

@@ -1,15 +1,54 @@
 <template>
-	<button @click="isCanvas = true">打开海报</button>
-	<div class="canvas-mark-box" v-if="isCanvas" @click="isCanvas = false">
-		<myCanvas
-			:drawArr="drawArr"
-			:width="690"
-			:height="996"
-			@canvasDrawComplete="canvasDrawComplete"
-		></myCanvas>
-		<div class="canvas-btn" @click.stop="downloadCanvasImageUrl">{{
-			canvasImageUrl ? '保存海报' : '绘制中...'
-		}}</div>
+	<div style="padding: 20rpx">
+		<button @click="isCanvas = true">打开海报</button>
+		<div class="canvas-mark-box" v-if="isCanvas" @click="isCanvas = false">
+			<myCanvas
+				:drawArr="drawArr"
+				:width="690"
+				:height="996"
+				@canvasDrawComplete="canvasDrawComplete"
+			></myCanvas>
+			<div class="canvas-btn" @click.stop="downloadCanvasImageUrl">{{
+				canvasImageUrl ? '保存海报' : '绘制中...'
+			}}</div>
+		</div>
+	</div>
+	<div style="padding: 20rpx">
+		<carouselCard :list="cardList" @clickCard="clickCard"> </carouselCard>
+	</div>
+	<div style="padding: 20rpx">
+		<myBanner
+			:bannerList="bannerList"
+			type="2"
+			height="500rpx"
+			@clickSwiper="clickSwiper"
+		></myBanner>
+	</div>
+	<div style="padding: 50rpx">
+		<myTooltip
+			position="left-top"
+			:text="tipText"
+			width="100%"
+			:arrowSize="20"
+			background="#eee"
+			shadowColor="#2D343E"
+			borderColor="#61B765"
+			:tipStyle="{
+				'border-radius': '30rpx',
+				'font-size': '30rpx',
+				'font-weight': 700,
+				color: '#000',
+			}"
+		>
+			<!-- 默认插槽,自定义内容 -->
+			<div class="tip-box">
+				<image
+					src="https://douleoss.oss-cn-shenzhen.aliyuncs.com/test/66236de1e4b0fb16c4b0c307.jpg"
+					mode="scaleToFill"
+				/>
+				<text>{{ tipText }}</text>
+			</div>
+		</myTooltip>
 	</div>
 	<div style="padding: 20rpx">
 		<hideText
@@ -51,9 +90,6 @@
 		<myStepper v-model:number="num" :automaticWidth="false"></myStepper>
 	</div>
 	<div style="padding: 20rpx">
-		<cardCarousel :list="cardCarousellist" @clickCard="clickCard"> </cardCarousel>
-	</div>
-	<div style="padding: 20rpx">
 		<myList :isFinish="isFinish" :isNotData="isNotData">
 			<!-- 默认插槽:展示数据 -->
 			<div class="list-item" v-for="(item, index) in list" :key="index">
@@ -74,15 +110,58 @@
 	import dayjs from 'dayjs';
 	onMounted(() => {
 		console.log(dayjs().format('YYYY-MM-DD HH:mm:ss dddd a'));
-		for (let index = 0; index < 10; index++) {
-			cardCarousellist.value.push({
-				id: index,
+		getList();
+		for (let index = 0; index < 5; index++) {
+			cardList.value.push({
+				name: `卡片${index + 1}`,
 				url: 'https://img-blog.csdnimg.cn/3d809148c83f4720b5e2a6567f816d89.jpeg',
-				name: '卡片' + index,
 			});
 		}
-		getList();
 	});
+
+	import myTooltip from './myTooltip.vue';
+	let tipText = ref(
+		'提示文字提示文字提示文字提示文字提示文字提示文字提示文字提示文字提示文字提示文字提示文字提示文字'
+	);
+
+	import carouselCard from './carouselCard.vue';
+	let cardList = ref([]);
+	function clickCard(card) {
+		console.log(card);
+	}
+
+	import myBanner from './myBanner.vue';
+	let bannerList = ref([
+		{
+			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+		},
+		{
+			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+		},
+		{
+			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+		},
+		{
+			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+		},
+		{
+			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+		},
+
+		// {
+		// 	url: 'http://vjs.zencdn.net/v/oceans.mp4',
+		// },
+		// {
+		// 	url: 'http://vjs.zencdn.net/v/oceans.mp4',
+		// },
+		// {
+		// 	url: 'http://vjs.zencdn.net/v/oceans.mp4',
+		// },
+	]);
+	// 点击轮播图
+	function clickSwiper(item) {
+		console.log(item);
+	}
 
 	import myList from './myList.vue';
 	let page = ref(1);
@@ -119,12 +198,6 @@
 		await getList();
 		uni.stopPullDownRefresh();
 	});
-
-	import cardCarousel from './cardCarousel.vue';
-	let cardCarousellist = ref([]);
-	function clickCard(card) {
-		console.log(card);
-	}
 
 	import myStepper from './myStepper.vue';
 	let num = ref(5);
@@ -251,8 +324,8 @@
 				// 绘制位置
 				left: 85,
 				bottom: 146,
-				text: '预约导乐服务 | 专业的技术、细心的真爱服务', // 文本
-				maxLine: 2, // 文本最大行数
+				text: '预约导乐服务 | 专业的技术、细心的真爱服务我是测试文本我是测试文本我是测试文本', // 文本
+				maxLine: 3, // 文本最大行数
 				maxWidth: 306, // 文本最大宽度
 				type: 'fill', // 绘制类型 ： fill：填充，stroke：描边
 				fontSize: 30, // 文本大小
@@ -353,5 +426,17 @@
 		color: #6ef2a3;
 		margin-bottom: 20rpx;
 		background: #918f8f;
+	}
+	.tip-box {
+		display: flex;
+		image {
+			width: 80rpx;
+			height: 80rpx;
+			border-radius: 50%;
+			margin-right: 10rpx;
+		}
+		text {
+			flex: 1;
+		}
 	}
 </style>
