@@ -1,25 +1,9 @@
 <script>
+	import { downloadFont, checkUpdate } from '@/utils';
 	export default {
 		onLaunch: function () {
-			/*
-			这种方式是为了区分不同的平台使用不同的字体
-			有注意事项,具体请参考：https://uniapp.dcloud.net.cn/api/ui/font.html#loadfontface
-			*/
-			// let platform = uni.getSystemInfoSync().platform;
-			// console.log('平台', platform);
-			// if (platform == 'android') {
-			// 	uni.loadFontFace({
-			// 		global: true,
-			// 		family: '字体包的自定义名称',
-			// 		source: 'url("字体包的地址")',
-			// 		success() {
-			// 			console.log('字体加载成功');
-			// 		},
-			// 		fail() {
-			// 			console.log('字体加载失败');
-			// 		},
-			// 	});
-			// }
+			downloadFont();
+			checkUpdate();
 		},
 		onShow: function () {},
 		onHide: function () {},
@@ -32,7 +16,7 @@
 	@import 'uview-plus/index.scss';
 
 	/*
-	引入字体
+	引入字体 字体包的地址可本地地址可在线地址
 	使用:在需要用到的元素的css样式中:font-family: 字体包的自定义名称;
 	*/
 	// @font-face {
