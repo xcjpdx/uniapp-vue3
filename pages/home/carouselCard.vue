@@ -1,6 +1,6 @@
 <template>
 	<swiper
-		:display-multiple-items="3"
+		:display-multiple-items="showNum"
 		:circular="true"
 		:autoplay="false"
 		:interval="3000"
@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-	import { ref, onMounted, computed, watchEffect, getCurrentInstance, nextTick } from 'vue';
+	import { ref, onMounted, computed, watch, getCurrentInstance, nextTick } from 'vue';
 	import { onLoad } from '@dcloudio/uni-app';
 	const { proxy } = getCurrentInstance();
 	const example = proxy;
@@ -27,7 +27,21 @@
 			type: Array,
 			required: true,
 		},
+		showNum: {
+			type: Number,
+			required: true,
+		},
 	});
+	let showNum = ref(0);
+	watch(
+		() => props.list.length,
+		(val) => {
+			if (val) {
+				showNum.value = props.showNum;
+			}
+		},
+		{ immediate: true }
+	);
 
 	onMounted(async () => {
 		await nextTick();

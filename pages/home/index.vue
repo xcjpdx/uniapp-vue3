@@ -14,7 +14,7 @@
 		</div>
 	</div>
 	<div style="padding: 20rpx">
-		<carouselCard :list="cardList" @clickCard="clickCard"> </carouselCard>
+		<carouselCard :list="cardList" :showNum="3" @clickCard="clickCard"> </carouselCard>
 	</div>
 	<div style="padding: 20rpx">
 		<myBanner
