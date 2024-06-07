@@ -36,7 +36,8 @@
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "",
 		"navigationBarBackgroundColor": "#fff",
-		"backgroundColor": "#F6F6F6"
+		"backgroundColor": "#F6F6F6",
+		"bounce": "none"
 	},
 	"tabBar": {
 		"color": "#999999",
