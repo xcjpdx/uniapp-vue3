@@ -2,8 +2,8 @@
 	import { downloadFont, checkUpdate } from '@/utils';
 	export default {
 		onLaunch: function () {
-			downloadFont();
-			checkUpdate();
+			// downloadFont();
+			// checkUpdate();
 		},
 		onShow: function () {},
 		onHide: function () {},
