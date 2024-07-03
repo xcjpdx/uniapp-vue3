@@ -1,5 +1,15 @@
 <template>
 	<div style="padding: 20rpx">
+		{{ currentTime }}
+		<button @click="timeShow = true">打开日期选择器</button>
+		<DateTimePicker
+			type="1"
+			v-model:timeShow="timeShow"
+			v-model:currentTime="currentTime"
+			@confirm="handleDateSelected"
+		/>
+	</div>
+	<div style="padding: 20rpx">
 		<button @click="isCanvas = true">打开海报</button>
 		<div class="canvas-mark-box" v-if="isCanvas" @click="isCanvas = false">
 			<myCanvas
@@ -67,7 +77,7 @@
 		></hideText>
 	</div>
 	<div style="padding: 20rpx">
-		<myTabs type="2" :tabList="tabList" :activeTab="activeTab" @changeTab="changeTab"></myTabs>
+		<myTabs type="1" :tabList="tabList" :activeTab="activeTab" @changeTab="changeTab"></myTabs>
 	</div>
 	<div style="padding: 20rpx">
 		<myTextarea
@@ -87,7 +97,7 @@
 		></myTextarea>
 	</div>
 	<div style="padding: 20rpx">
-		<myStepper v-model:number="num" :automaticWidth="false"></myStepper>
+		<myStepper v-model:number="num" :automaticWidth="true"></myStepper>
 	</div>
 	<div style="padding: 20rpx">
 		<myList :isFinish="isFinish" :isNotData="isNotData">
@@ -101,11 +111,12 @@
 			<!-- <template #notData>暂无数据</template> -->
 		</myList>
 	</div>
+	<backToTop :pageScrollingDistance="pageScrollingDistance"></backToTop>
 </template>
 
 <script setup>
 	import { ref, onMounted, computed, watchEffect, getCurrentInstance } from 'vue';
-	import { onLoad, onPullDownRefresh, onReachBottom } from '@dcloudio/uni-app';
+	import { onLoad, onPullDownRefresh, onReachBottom, onPageScroll } from '@dcloudio/uni-app';
 	const { proxy } = getCurrentInstance();
 	import dayjs from 'dayjs';
 	onMounted(() => {
@@ -117,6 +128,26 @@
 				url: 'https://img-blog.csdnimg.cn/3d809148c83f4720b5e2a6567f816d89.jpeg',
 			});
 		}
+	});
+
+	import DateTimePicker from './DateTimePicker.vue';
+	let timeShow = ref(false);
+	let currentTime = ref('');
+	function handleDateSelected(selectedTimestamp) {
+		console.log('返回的毫秒数', selectedTimestamp);
+		const date = new Date(selectedTimestamp);
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0');
+		const day = String(date.getDate()).padStart(2, '0');
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		console.log(`返回的时间: ${year}-${month}-${day} ${hours}:${minutes}`);
+	}
+
+	import backToTop from './backToTop.vue';
+	let pageScrollingDistance = ref(0);
+	onPageScroll((e) => {
+		pageScrollingDistance.value = Math.ceil(e.scrollTop);
 	});
 
 	import myTooltip from './myTooltip.vue';
@@ -219,26 +250,26 @@
 			id: 3,
 			name: '视频',
 		},
-		// {
-		// 	id: 4,
-		// 	name: '公告',
-		// },
-		// {
-		// 	id: 5,
-		// 	name: '活动',
-		// },
-		// {
-		// 	id: 6,
-		// 	name: '我的占位',
-		// },
-		// {
-		// 	id: 7,
-		// 	name: '购物占位',
-		// },
-		// {
-		// 	id: 8,
-		// 	name: '游泳占位',
-		// },
+		{
+			id: 4,
+			name: '公告',
+		},
+		{
+			id: 5,
+			name: '活动',
+		},
+		{
+			id: 6,
+			name: '我的占位',
+		},
+		{
+			id: 7,
+			name: '购物占位',
+		},
+		{
+			id: 8,
+			name: '游泳占位',
+		},
 	]);
 	let activeTab = ref(1);
 	function changeTab(tab) {
