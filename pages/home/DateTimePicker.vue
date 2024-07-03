@@ -70,6 +70,10 @@
 			type: Number,
 			default: 5,
 		},
+		yearRange: {
+			type: Number,
+			default: 5,
+		},
 		closeOnClickOverlay: {
 			type: Boolean,
 			default: false,
@@ -165,7 +169,7 @@
 		days.value = [];
 		hours.value = [];
 		minutes.value = [];
-		for (let i = year.value - 5; i <= year.value + 5; i++) {
+		for (let i = year.value - props.yearRange; i <= year.value + props.yearRange; i++) {
 			years.value.push(i);
 		}
 		for (let i = 1; i <= 12; i++) {
@@ -220,14 +224,7 @@
 		[year.value, month.value, day.value, hour.value, minute.value] = selectedValues;
 		updateDays();
 		if (!props.showToolbar) {
-			const selectedDate = new Date(
-				year.value,
-				month.value - 1,
-				day.value,
-				hour.value,
-				minute.value
-			);
-			const timestamp = selectedDate.getTime();
+			let { timestamp } = getSelectedTime();
 			emit('update:currentTime', timestamp);
 		}
 	}
@@ -250,11 +247,22 @@
 		emit('update:timeShow', false);
 	}
 	function confirm() {
-		const selectedDate = new Date(year.value, month.value - 1, day.value, hour.value, minute.value);
-		const timestamp = selectedDate.getTime();
-		emit('confirm', timestamp);
+		let { timestamp, formattedDate } = getSelectedTime();
+		emit('confirm', timestamp, formattedDate);
 		emit('update:currentTime', timestamp);
 		emit('update:timeShow', false);
+	}
+	// 获取选中时间的毫秒数以及格式化后的展示时间
+	function getSelectedTime() {
+		const selectedDate = new Date(year.value, month.value - 1, day.value, hour.value, minute.value);
+		const timestamp = selectedDate.getTime();
+		const data_year = formatNumber(year.value);
+		const data_month = formatNumber(month.value);
+		const data_day = formatNumber(day.value);
+		const data_hours = formatNumber(hour.value);
+		const data_minutes = formatNumber(minute.value);
+		const formattedDate = `${data_year}-${data_month}-${data_day} ${data_hours}:${data_minutes}`;
+		return { timestamp, formattedDate };
 	}
 </script>
 

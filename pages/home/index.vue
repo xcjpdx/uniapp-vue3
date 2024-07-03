@@ -133,15 +133,9 @@
 	import DateTimePicker from './DateTimePicker.vue';
 	let timeShow = ref(false);
 	let currentTime = ref('');
-	function handleDateSelected(selectedTimestamp) {
-		console.log('返回的毫秒数', selectedTimestamp);
-		const date = new Date(selectedTimestamp);
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0');
-		const day = String(date.getDate()).padStart(2, '0');
-		const hours = String(date.getHours()).padStart(2, '0');
-		const minutes = String(date.getMinutes()).padStart(2, '0');
-		console.log(`返回的时间: ${year}-${month}-${day} ${hours}:${minutes}`);
+	function handleDateSelected(timestamp, formattedDate) {
+		console.log('返回的毫秒数: ', timestamp);
+		console.log('返回的格式化后的时间: ', formattedDate);
 	}
 
 	import backToTop from './backToTop.vue';
