@@ -1,9 +1,17 @@
 <template>
 	<div style="padding: 20rpx">
-		{{ currentTime }}
+		<myUpload
+			url="https://pmcctestapi.wsandos.com/common/file/upload"
+			accept="file"
+			@uploadCompleted="uploadCompleted"
+		></myUpload>
+	</div>
+	<div style="padding: 20rpx">
 		<button @click="timeShow = true">打开日期选择器</button>
 		<DateTimePicker
 			type="1"
+			:itemHeight="50"
+			:visibleItemCount="3"
 			v-model:timeShow="timeShow"
 			v-model:currentTime="currentTime"
 			@confirm="handleDateSelected"
@@ -129,6 +137,11 @@
 			});
 		}
 	});
+
+	import myUpload from './myUpload.vue';
+	function uploadCompleted(file) {
+		console.log(file);
+	}
 
 	import DateTimePicker from './DateTimePicker.vue';
 	let timeShow = ref(false);

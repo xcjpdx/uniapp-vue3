@@ -20,7 +20,7 @@
 			<picker-view
 				:indicator-style="indicatorStyle"
 				:value="selectDate"
-				immediate-change
+				:immediate-change="props.immediateChange"
 				@change="bindChange"
 				class="picker-view"
 				:style="pickerStyle"
@@ -106,17 +106,17 @@
 			type: Boolean,
 			default: true,
 		},
+		immediateChange: {
+			type: Boolean,
+			default: true,
+		},
 	});
 	const emit = defineEmits(['update:timeShow', 'update:currentTime', 'confirm']);
 
 	onMounted(() => {
 		indicatorStyle.value = `height: ${props.itemHeight}px;`;
-		pickerStyle.value = {
-			height: `${props.visibleItemCount * props.itemHeight}px;`,
-		};
+		pickerStyle.value = `height: ${props.visibleItemCount * props.itemHeight}px;`;
 	});
-
-	let pickerStyle = ref({});
 
 	const date = new Date();
 	const years = ref([]);
@@ -131,6 +131,7 @@
 	const minute = ref('');
 	const selectDate = ref([]);
 	const indicatorStyle = ref('');
+	const pickerStyle = ref('');
 
 	const showYear = computed(() => ['1', '2', '3', '7'].includes(props.type));
 	const showMonth = computed(() => ['1', '2', '3', '4', '5', '8'].includes(props.type));
@@ -253,6 +254,17 @@
 		emit('update:timeShow', false);
 	}
 	// 获取选中时间的毫秒数以及格式化后的展示时间
+	// function getSelectedTime() {
+	// 	const selectedDate = new Date(year.value, month.value - 1, day.value, hour.value, minute.value);
+	// 	const timestamp = selectedDate.getTime();
+	// 	const data_year = formatNumber(year.value);
+	// 	const data_month = formatNumber(month.value);
+	// 	const data_day = formatNumber(day.value);
+	// 	const data_hours = formatNumber(hour.value);
+	// 	const data_minutes = formatNumber(minute.value);
+	// 	const formattedDate = `${data_year}-${data_month}-${data_day} ${data_hours}:${data_minutes}`;
+	// 	return { timestamp, formattedDate };
+	// }
 	function getSelectedTime() {
 		const selectedDate = new Date(year.value, month.value - 1, day.value, hour.value, minute.value);
 		const timestamp = selectedDate.getTime();
@@ -261,7 +273,49 @@
 		const data_day = formatNumber(day.value);
 		const data_hours = formatNumber(hour.value);
 		const data_minutes = formatNumber(minute.value);
-		const formattedDate = `${data_year}-${data_month}-${data_day} ${data_hours}:${data_minutes}`;
+
+		let formattedDate;
+		switch (props.type) {
+			case '1':
+				formattedDate = `${data_year}-${data_month}-${data_day} ${data_hours}:${data_minutes}`;
+				break;
+			case '2':
+				formattedDate = `${data_year}-${data_month}-${data_day}`;
+				break;
+			case '3':
+				formattedDate = `${data_year}-${data_month}`;
+				break;
+			case '4':
+				formattedDate = `${data_month}-${data_day}`;
+				break;
+			case '5':
+				formattedDate = `${data_month}-${data_day} ${data_hours}:${data_minutes}`;
+				break;
+			case '6':
+				formattedDate = `${data_day} ${data_hours}:${data_minutes}`;
+				break;
+			case '7':
+				formattedDate = `${data_year}`;
+				break;
+			case '8':
+				formattedDate = `${data_month}`;
+				break;
+			case '9':
+				formattedDate = `${data_day}`;
+				break;
+			case '10':
+				formattedDate = `${data_hours}:${data_minutes}`;
+				break;
+			case '11':
+				formattedDate = `${data_hours}`;
+				break;
+			case '12':
+				formattedDate = `${data_minutes}`;
+				break;
+			default:
+				formattedDate = `${data_year}-${data_month}-${data_day} ${data_hours}:${data_minutes}`;
+		}
+
 		return { timestamp, formattedDate };
 	}
 </script>
