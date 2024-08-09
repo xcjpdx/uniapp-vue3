@@ -3,6 +3,8 @@
 		<myUpload
 			url="https://pmcctestapi.wsandos.com/common/file/upload"
 			accept="file"
+			maxSize="1"
+			maxSizeAll="10"
 			@uploadCompleted="uploadCompleted"
 		></myUpload>
 	</div>

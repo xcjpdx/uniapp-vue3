@@ -15,7 +15,19 @@ export const useDataStore = defineStore(
 		};
 	},
 	{
-		persist: true,
+		// persist: true,
+		// 配置持久化
+		persist: {
+			// 兼容多端的API
+			storage: {
+				setItem(key, value) {
+					uni.setStorageSync(key, value);
+				},
+				getItem(key) {
+					return uni.getStorageSync(key);
+				},
+			},
+		},
 	}
 );
 
