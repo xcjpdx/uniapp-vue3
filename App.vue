@@ -34,7 +34,6 @@
 		font-size: $uni-font-size-theme;
 		background: $uni-bg-color;
 		color: $uni-text-color;
-		font-family: Source Han Sans SC;
 		scroll-behavior: smooth;
 	}
 	uni-modal {

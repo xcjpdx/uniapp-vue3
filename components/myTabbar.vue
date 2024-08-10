@@ -66,14 +66,16 @@
 
 <style lang="scss" scoped>
 	.tabbar-box {
+		width: 100%;
 		z-index: 1000;
 		position: fixed;
 		bottom: 0;
 		left: 0;
 		padding: 20rpx;
-		padding-bottom: constant(safe-area-inset-bottom);
-		padding-bottom: env(safe-area-inset-bottom);
-		width: 100%;
+		// 兼容 IOS<11.2
+		padding-bottom: calc(constant(safe-area-inset-bottom) + 20rpx);
+		// 兼容 IOS>=11.2
+		padding-bottom: calc(env(safe-area-inset-bottom) + 20rpx);
 		background: #fff;
 		box-shadow: 0rpx -1rpx 21rpx 0rpx rgba(131, 128, 127, 0.1);
 		border-radius: 20rpx;

@@ -55,7 +55,7 @@
 			"urlCheck": false
 		},
 		"usingComponents": true,
-		"optimization": { "subPackages": true }
+		"optimization": { "subPackages": true } // 分包
 	},
 	"mp-alipay": {
 		"usingComponents": true

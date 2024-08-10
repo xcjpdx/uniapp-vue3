@@ -5,7 +5,7 @@ export const getImg = function (path) {
 // 下载字体
 export const downloadFont = function () {
 	/*
-	这种方式是为了区分不同的平台使用不同的字体
+	这种方式是为了区分不同的平台使用不同的字体或者进行更灵活的操作
 	有注意事项,具体请参考：https://uniapp.dcloud.net.cn/api/ui/font.html#loadfontface
 	*/
 	let platform = uni.getSystemInfoSync().platform;
@@ -60,5 +60,67 @@ export const checkUpdate = function () {
 			showCancel: false,
 			content: `新版本 ${version} 下载失败, 请手动重启应用重试`,
 		});
+	});
+};
+
+/*
+	获取用户授权(小程序专用)
+	@scopeName 授权名称 参考文档:https://uniapp.dcloud.net.cn/api/other/authorize.html#scope-%E5%88%97%E8%A1%A8
+	@tip 提示信息
+	@cb 回调函数
+*/
+export const getSetting = function (scopeName, tip = '请在设置中开启授权', cb) {
+	uni.getSetting({
+		success: (res) => {
+			if (res.authSetting[scopeName]) {
+				// 已经授权，调用回调函数
+				cb();
+			} else if (res.authSetting[scopeName] === false) {
+				// 用户已拒绝授权，引导用户到设置页面开启
+				uni.showModal({
+					title: '您未开启相关授权',
+					content: tip,
+					success: (res) => {
+						if (res.confirm) {
+							uni.openSetting({
+								success(settingRes) {
+									if (settingRes.authSetting[scopeName]) {
+										// 用户打开了授权，调用回调函数
+										cb();
+									}
+								},
+							});
+						}
+					},
+				});
+			} else {
+				// 首次使用，请求授权
+				uni.authorize({
+					scope: scopeName,
+					success() {
+						cb();
+					},
+					fail() {
+						// 首次使用，用户拒绝授权，引导用户到设置页面开启
+						uni.showModal({
+							title: '您未开启相关授权',
+							content: tip,
+							success: (res) => {
+								if (res.confirm) {
+									uni.openSetting({
+										success(settingRes) {
+											if (settingRes.authSetting[scopeName]) {
+												// 用户打开了授权，调用回调函数
+												cb();
+											}
+										},
+									});
+								}
+							},
+						});
+					},
+				});
+			}
+		},
 	});
 };
