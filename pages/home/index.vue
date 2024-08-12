@@ -121,6 +121,7 @@
 			<!-- <template #notData>暂无数据</template> -->
 		</myList>
 	</div>
+	<myTabbar type="home"></myTabbar>
 	<backToTop :pageScrollingDistance="pageScrollingDistance"></backToTop>
 </template>
 
@@ -130,6 +131,7 @@
 	const { proxy } = getCurrentInstance();
 	import dayjs from 'dayjs';
 	onMounted(() => {
+		uni.hideTabBar();
 		console.log(dayjs().format('YYYY-MM-DD HH:mm:ss dddd a'));
 		getList();
 		for (let index = 0; index < 5; index++) {
@@ -139,6 +141,8 @@
 			});
 		}
 	});
+
+	import myTabbar from '../../components/myTabbar.vue';
 
 	import myUpload from './myUpload.vue';
 	function uploadCompleted(file) {
@@ -205,7 +209,7 @@
 
 	import myList from './myList.vue';
 	let page = ref(1);
-	let limit = ref(10);
+	let limit = ref(5);
 	let isFinish = ref(false); // 是否加载完成
 	let isNotData = ref(false); // 是否没有数据
 	let list = ref([]);
@@ -219,7 +223,7 @@
 				name: '列表' + (i + index + 1),
 			});
 		}
-		if (list.value.length == 20) {
+		if (list.value.length == 5) {
 			res.pop();
 		}
 		// 模拟发起请求 结束

@@ -1,5 +1,5 @@
 <template>
-	<view class="tabbar-box" :style="{ 'padding-bottom': deviceType === 'android' ? '40rpx' : '' }">
+	<view class="tabbar-box">
 		<view
 			class="tabbar-box-item"
 			v-for="(item, index) in tabbarList"
@@ -10,6 +10,8 @@
 			<text :style="{ color: props.type === item.type ? '#2D99A1' : '' }">{{ item.title }}</text>
 		</view>
 	</view>
+	<!-- 占位 -->
+	<view :style="{ height: tabbarHeight + 'px' }"></view>
 </template>
 
 <script setup>
@@ -24,17 +26,15 @@
 			default: 'home',
 		},
 	});
-	const emit = defineEmits(['tabbarHeight']);
 
-	let deviceType = ref('');
+	let tabbarHeight = ref('');
 	onMounted(() => {
-		deviceType.value = uni.getSystemInfoSync().osName;
 		// 获取 tabbar-box 的高度
 		let query = uni.createSelectorQuery().in(instance);
 		query
 			.select('.tabbar-box')
 			.boundingClientRect((data) => {
-				emit('tabbarHeight', data.height + 'px');
+				tabbarHeight.value = data.height;
 			})
 			.exec();
 	});
