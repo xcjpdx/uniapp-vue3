@@ -92,7 +92,7 @@
 	onMounted(() => {
 		const systemInfo = uni.getSystemInfoSync();
 		platform = systemInfo.uniPlatform;
-		console.log('平台', platform);
+		// console.log('平台', platform);
 	});
 
 	const props = defineProps({

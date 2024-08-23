@@ -3,8 +3,8 @@
 		:display-multiple-items="showNum"
 		:circular="true"
 		:autoplay="false"
-		:interval="3000"
-		:duration="3000"
+		:interval="100"
+		:duration="100"
 		easing-function="linear"
 		:style="{ height: cardHeigth + 'px' }"
 	>

@@ -15,8 +15,11 @@ dayjs.locale('zh-cn'); // 使用本地化语言
 // 国际化
 import messages from './locale/index.js';
 import { createI18n } from 'vue-i18n';
+const locale = uni.getStorageSync('locale') || uni.getLocale() || 'zh-Hans';
+console.log('本地化语言', locale);
+uni.setStorageSync('locale', locale);
 const i18nConfig = {
-	locale: uni.getLocale() || 'zh-Hans',
+	locale,
 	messages,
 };
 const i18n = createI18n(i18nConfig);

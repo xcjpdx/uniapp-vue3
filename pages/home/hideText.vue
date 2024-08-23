@@ -10,17 +10,17 @@
 		<view
 			class="label-box"
 			:style="[{ 'justify-content': showAll ? 'flex-end' : 'space-between' }, lableBoxStyle]"
-			@click="showText"
 			v-if="lines > rows"
 		>
 			<text :style="props.textStyle">{{ showAll ? '' : '...' }}</text>
 			<image
+				@click="showText"
 				v-if="props.labelIcon"
 				:src="props.labelIcon"
 				mode=""
 				:style="[{ transform: 'rotate(' + (showAll ? 180 : 0) + 'deg)' }, labelStyle]"
 			/>
-			<view v-else :style="[props.textStyle, labelStyle, { height: '100%' }]">
+			<view v-else @click="showText" :style="[props.textStyle, labelStyle, { height: '100%' }]">
 				{{ showAll ? props.hideText : props.showText }}
 			</view>
 		</view>
