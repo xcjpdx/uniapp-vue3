@@ -16,7 +16,7 @@ dayjs.locale('zh-cn'); // 使用本地化语言
 import messages from './locale/index.js';
 import { createI18n } from 'vue-i18n';
 const locale = uni.getStorageSync('locale') || uni.getLocale() || 'zh-Hans';
-console.log('本地化语言', locale);
+// console.log('本地化语言', locale);
 uni.setStorageSync('locale', locale);
 const i18nConfig = {
 	locale,
@@ -36,6 +36,8 @@ export function createApp() {
 
 	// uview-plus
 	app.use(uviewPlus);
+	// uview-plus 单位配置
+	uni.$u.config.unit = 'rpx';
 
 	// pinia
 	const pinia = createPinia();
@@ -48,9 +50,6 @@ export function createApp() {
 	// 公共组件
 	app.component('myNavbar', myNavbar);
 	app.component('myTabbar', myTabbar);
-
-	// 如此配置即可
-	uni.$u.config.unit = 'rpx';
 
 	return {
 		app,
