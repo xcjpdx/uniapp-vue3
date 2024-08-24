@@ -1,10 +1,16 @@
 <template>
 	<div style="padding: 20rpx">
+		{{ $t('home.title') }}
+	</div>
+	<button @click="aa">切换为英文</button>
+	<button @click="bb">切换为中文</button>
+	<button @click="cc">js访问国际化语言</button>
+	<div style="padding: 20rpx">
 		<myUpload
 			url="https://pmcctestapi.wsandos.com/common/file/upload"
 			accept="file"
-			maxSize="1"
-			maxSizeAll="10"
+			maxSize="10"
+			maxSizeAll="100"
 			@uploadCompleted="uploadCompleted"
 		></myUpload>
 	</div>
@@ -70,19 +76,12 @@
 			</div>
 		</myTooltip>
 	</div>
-	<div style="padding: 20rpx">
+	<div style="padding: 20rpx; width: 200px">
 		<hideText
 			:text="text"
-			rows="2"
+			rows="1"
 			:labelStyle="{
-				background: '#000',
-				'font-size': '20rpx',
-				padding: '5rpx 20rpx',
-				'border-radius': '6rpx',
-				color: '#fff',
-				display: 'flex',
-				'justify-content': 'center',
-				'align-items': 'center',
+				display: 'none',
 			}"
 		></hideText>
 	</div>
@@ -142,7 +141,17 @@
 		}
 	});
 
-	import myTabbar from '../../components/myTabbar.vue';
+	import { changeLocale, getLocaleText } from '@/utils/i18n';
+	function aa() {
+		changeLocale(proxy, 'en');
+	}
+	function bb() {
+		changeLocale(proxy, 'zh-Hans');
+	}
+	function cc() {
+		let text = getLocaleText(proxy, 'home.title');
+		console.log(text);
+	}
 
 	import myUpload from './myUpload.vue';
 	function uploadCompleted(file) {
