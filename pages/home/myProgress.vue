@@ -1,19 +1,21 @@
 <template>
-	<div class="mark-box" v-if="show">
+	<div class="mark-box" v-if="markShow">
 		<div class="progress-container">
-			<div class="progress-text" :style="{ color: props.color }" v-if="progress < 100">
-				{{ props.text }}
-				中
-				{{ progress }} %</div
-			>
+			<div class="progress-text" :style="{ color: props.waitColor }" v-if="progress < 100">
+				{{ props.waitText }} {{ progress }} %
+			</div>
 			<div
 				class="progress-text"
-				:style="{ color: props.isFailed ? '#ec1d1d' : props.color }"
+				:style="{ color: props.isFailed ? props.failColor : props.successColor }"
 				v-else
-				>{{ props.isFailed ? props.text + '失败' : props.text + '成功' }}</div
 			>
+				{{ props.isFailed ? props.failText : props.successText }}
+			</div>
 			<div class="progress-bar">
-				<div class="progress" :style="{ width: progress + '%', background: props.color }"></div>
+				<div
+					class="progress"
+					:style="{ width: progress + '%', background: props.progressBarColor }"
+				></div>
 			</div>
 		</div>
 	</div>
@@ -23,50 +25,73 @@
 	import { ref, watch, onMounted } from 'vue';
 
 	const props = defineProps({
-		// 组件的状态 true 表示开始 | false 表示结束
 		state: {
 			type: Boolean,
 			required: true,
 		},
-		// 是否失败
 		isFailed: {
 			type: Boolean,
 			required: true,
 		},
-		color: {
-			type: String,
-			default: '#76b852',
+		totalSize: {
+			type: Number,
 		},
-		text: {
+		currentSize: {
+			type: Number,
+		},
+		waitText: {
 			type: String,
-			default: '上传',
+			default: '上传中',
+		},
+		waitColor: {
+			type: String,
+			default: '#F5BD00',
+		},
+		successText: {
+			type: String,
+			default: '上传成功',
+		},
+		successColor: {
+			type: String,
+			default: '#00B26A',
+		},
+		failText: {
+			type: String,
+			default: '上传失败',
+		},
+		failColor: {
+			type: String,
+			default: '#EB3941',
+		},
+		progressBarColor: {
+			type: String,
+			default: '#00B26A',
 		},
 	});
 	const emit = defineEmits(['closeProgress']);
 
-	let time = null; // 定时器
 	let progress = ref(0); // 进度条百分比
-	let show = ref(false); // 遮罩层是否显示
+	let markShow = ref(false); // 遮罩层是否显示
 	watch(
 		() => props.state,
 		(val) => {
 			if (val) {
-				show.value = true;
-				time = setInterval(() => {
-					if (progress.value < 99) {
-						progress.value += 1;
-					}
-				}, 100);
+				markShow.value = val;
 			} else {
-				clearInterval(time);
-				progress.value = 100;
 				setTimeout(() => {
+					markShow.value = val;
+					progress.value = 0;
 					emit('closeProgress');
-					show.value = false;
-					setTimeout(() => {
-						progress.value = 0;
-					}, 500);
-				}, 1500);
+				}, 1000);
+			}
+		}
+	);
+	watch(
+		() => props.currentSize,
+		() => {
+			if (markShow.value) {
+				progress.value = ((props.currentSize / props.totalSize) * 100).toFixed(1);
+				// console.log('当前进度', progress.value);
 			}
 		}
 	);

@@ -9,10 +9,11 @@
 		<myUpload
 			url="https://pmcctestapi.wsandos.com/common/file/upload"
 			accept="file"
-			maxSize="10"
-			maxSizeAll="100"
+			:multiple="true"
+			v-model:fileList="fileList"
 			@uploadCompleted="uploadCompleted"
 		></myUpload>
+		<button @click="viewFileList">点击查看文件列表</button>
 	</div>
 	<div style="padding: 20rpx">
 		<button @click="timeShow = true">打开日期选择器</button>
@@ -154,8 +155,20 @@
 	}
 
 	import myUpload from './myUpload.vue';
+	let fileList = ref([
+		{
+			fullurl:
+				'https://pmcctestapi.wsandos.com/uploads/20240827/751997c6ef44a256c8cd3325d4b27473.xls',
+			name: '组织生活.xls',
+			size: 4235,
+			type: 'document',
+		},
+	]);
+	function viewFileList() {
+		console.log('文件列表', fileList.value);
+	}
 	function uploadCompleted(file) {
-		console.log(file);
+		console.log('回调函数', file);
 	}
 
 	import DateTimePicker from './DateTimePicker.vue';

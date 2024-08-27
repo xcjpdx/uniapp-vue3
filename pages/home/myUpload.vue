@@ -30,7 +30,7 @@
 				class="other-file"
 				v-for="(item, index) in fileList"
 				:key="index"
-				@click="clickFile(item, index)"
+				@click="clickFile(item)"
 			>
 				<div class="name">
 					<template v-if="item.type == 'image'">
@@ -55,6 +55,7 @@
 			:capture="['album', 'camera']"
 			:compressed="props.compressed"
 			:camera="props.camera"
+			:maxDuration="props.maxDuration"
 			:multiple="props.multiple"
 			:maxCount="props.maxCount"
 			@afterRead="afterRead"
@@ -77,7 +78,13 @@
 				</div>
 			</div>
 		</u-overlay>
-		<myProgress :state="state" :isFailed="isFailed" @closeProgress="closeProgress"></myProgress>
+		<myProgress
+			:state="state"
+			:currentSize="progressCurrentSize"
+			:totalSize="progressTotalSize"
+			:isFailed="isFailed"
+			@closeProgress="closeProgress"
+		></myProgress>
 	</div>
 </template>
 
@@ -85,8 +92,6 @@
 	import { ref, onMounted, computed, watchEffect, getCurrentInstance } from 'vue';
 	import { onLoad } from '@dcloudio/uni-app';
 	const { proxy } = getCurrentInstance();
-	const example = proxy;
-	import myProgress from './myProgress.vue';
 
 	let platform = '';
 	onMounted(() => {
@@ -96,56 +101,70 @@
 	});
 
 	const props = defineProps({
-		// 上传的服务器地址
 		url: {
 			type: String,
 			required: true,
 		},
-		/*
-		上传的文件类型 all | file | media | image | video
-		file只支持H5,只有微信小程序才支持把accept配置为all、media
-		*/
 		accept: {
 			type: String,
 			default: 'image',
 		},
-		// 当accept为video时生效，是否压缩视频
-		compressed: {
-			type: Boolean,
-			default: true,
-		},
-		// 当accept为video时生效，使用前置还是后置摄像头
-		camera: {
-			type: String,
-			default: 'back',
-		},
-		// 是否支持多选
 		multiple: {
 			type: Boolean,
 			default: true,
 		},
-		// 最大上传数量
 		maxCount: {
 			type: String,
 			default: '9',
 		},
-		// 限制单个文件的上传大小，单位MB
 		maxSize: {
 			type: String,
 			default: '',
 		},
-		// 限制上传的所有文件的总大小，单位MB
 		maxSizeAll: {
 			type: String,
 			default: '',
 		},
+		compressed: {
+			type: Boolean,
+			default: true,
+		},
+		camera: {
+			type: String,
+			default: 'back',
+		},
+		maxDuration: {
+			type: Number,
+			default: 60,
+		},
 	});
+	let fileList = defineModel('fileList'); // 文件列表
 	const emit = defineEmits(['uploadCompleted']);
 
-	let fileList = ref([]); // 文件列表
 	// 进度条相关
+	import myProgress from './myProgress.vue';
 	let state = ref(false); // 进度条组件状态
 	let isFailed = ref(false); // 是否失败
+	// 关闭进度条
+	function closeProgress() {
+		state.value = false;
+		isFailed.value = false;
+	}
+	let progressTotalSize = ref(0); // 总上传数据大小
+	// 计算需要上传的数据总大小
+	function getTotalSize(file) {
+		let totalSize = 0;
+		if (props.multiple) {
+			file.forEach((item) => {
+				totalSize += item.size;
+			});
+		} else {
+			totalSize = file.size;
+		}
+		progressTotalSize.value = totalSize;
+	}
+	let progressCurrentSize = ref(0); // 当前上传数据大小
+
 	// 上传文件之后
 	async function afterRead({ file }) {
 		try {
@@ -160,15 +179,10 @@
 		}
 		state.value = false;
 	}
-	// 关闭进度条
-	function closeProgress() {
-		state.value = false;
-		isFailed.value = false;
-	}
 
 	// 单文件上传
 	async function uploadFile(file) {
-		file.type = getFileType(file);
+		file.type = getFileType(file.name);
 		let { type, size, url } = file;
 
 		// 进行文件筛选 根据文件类型筛选(只保留图片和视频还有文档文件)
@@ -190,14 +204,26 @@
 			return;
 		}
 
+		// 检查所有文件的总大小是否超过限制
+		let maxSizeAll = Number(props.maxSizeAll);
+		if (maxSizeAll && Math.ceil(size / 1024 / 1024) > maxSizeAll) {
+			setTimeout(() => {
+				uni.showToast({ title: `最多上传 ${maxSizeAll} MB 的文件`, icon: 'none' });
+			}, 1500);
+			isFailed.value = true;
+			return;
+		}
+
+		progressCurrentSize.value = 0;
+		getTotalSize(file);
+
 		// 开始上传
-		let res = await upload(url);
+		let res = await upload(url, 0);
 		fileList.value = [
 			{
 				type,
-				name: getNameInType(element),
+				name: getNameInType(file),
 				size,
-				url: res.url,
 				fullurl: res.fullurl,
 			},
 		];
@@ -207,7 +233,7 @@
 	// 多文件上传
 	async function uploadFiles(file) {
 		file.forEach((item) => {
-			item.type = getFileType(item);
+			item.type = getFileType(item.name);
 		});
 
 		// 进行文件筛选 根据文件类型筛选(只保留图片和视频还有文档文件)
@@ -272,11 +298,6 @@
 			}
 		}
 
-		// 对文件进行排序 按照文件大小进行从小到大的排序
-		file.sort((a, b) => {
-			return a.size - b.size;
-		});
-
 		// 检查所有文件的总大小是否超过限制
 		let maxSizeAll = Number(props.maxSizeAll);
 		if (maxSizeAll) {
@@ -296,92 +317,83 @@
 			}
 		}
 
+		progressCurrentSize.value = 0;
+		getTotalSize(file);
+
 		// 开始上传
 		for (let index = 0; index < file.length; index++) {
 			let element = file[index];
-			let url = element.url;
-			let res = await upload(url);
+			let res = await upload(element.url, index);
 			fileList.value.push({
 				type: element.type,
 				name: getNameInType(element),
 				size: element.size,
-				url: res.url,
 				fullurl: res.fullurl,
 			});
 		}
 
-		// 根据文件类型进行排序
-		fileList.value = sortTypeFile(fileList.value);
-
 		emit('uploadCompleted', fileList.value);
 	}
 	// 获取文件类型
-	function getFileType(file) {
-		let fileType = 'other';
-
-		// H5 平台处理
-		if (platform === 'web') {
-			const mimeType = file.type;
-
-			if (mimeType.startsWith('image/')) {
-				fileType = 'image';
-			} else if (mimeType.startsWith('video/')) {
-				fileType = 'video';
-			} else if (
-				[
-					'application/msword',
-					'application/vnd.ms-excel',
-					'application/vnd.ms-powerpoint',
-					'application/pdf',
-					'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-					'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-					'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-				].includes(mimeType)
-			) {
-				fileType = 'document';
-			}
+	function getFileType(fileName) {
+		let fileType = '';
+		const imageExtensions = [
+			'jpg',
+			'jpeg',
+			'png',
+			'gif',
+			'bmp',
+			'tiff',
+			'tif',
+			'webp',
+			'heic',
+			'ico',
+			'svg',
+			'eps',
+			'ai',
+			'raw',
+			'psd',
+			'xcf',
+			'tga',
+			'dds',
+		];
+		const videoExtensions = [
+			'mp4',
+			'mkv',
+			'avi',
+			'mov',
+			'wmv',
+			'flv',
+			'webm',
+			'mpg',
+			'mpeg',
+			'3gp',
+			'm4v',
+			'vob',
+			'rmvb',
+			'f4v',
+			'ts',
+			'ogv',
+			'mxf',
+			'asf',
+			'swf',
+		];
+		const documentExtensions = ['doc', 'xls', 'ppt', 'pdf', 'docx', 'xlsx', 'pptx'];
+		const extension = fileName.split('.').pop().toLowerCase();
+		// console.log('文件后缀', extension);
+		if (imageExtensions.includes(extension)) {
+			fileType = 'image';
+		} else if (videoExtensions.includes(extension)) {
+			fileType = 'video';
+		} else if (documentExtensions.includes(extension)) {
+			fileType = 'document';
+		} else {
+			fileType = 'other';
 		}
-
-		// 小程序和 App 平台处理
-		else if (platform === 'mp-weixin' || platform === 'app-plus') {
-			if (file.type === 'image') {
-				fileType = 'image';
-			} else if (file.type === 'video') {
-				fileType = 'video';
-			} else {
-				const extension = file.name.split('.').pop().toLowerCase();
-				if (['doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'pdf'].includes(extension)) {
-					fileType = 'document';
-				}
-			}
-		}
-
 		return fileType;
 	}
 
-	// 将文件按照类型进行排序 image > video > document
-	function sortTypeFile(file) {
-		let imageFile = [];
-		let videoFile = [];
-		let documentArr = [];
-		for (let index = 0; index < file.length; index++) {
-			const element = file[index];
-			switch (element.type) {
-				case 'image':
-					imageFile.push(element);
-					break;
-				case 'video':
-					videoFile.push(element);
-					break;
-				case 'document':
-					documentArr.push(element);
-					break;
-			}
-		}
-		file = [...imageFile, ...videoFile, ...documentArr];
-		return file;
-	}
-	// 根据文件类型返回文件名
+	// 返回文件名(如果没有文件名:根据文件类型返回自定的文件名)
 	function getNameInType(file) {
 		let name = '';
 		if (file.name) {
@@ -406,16 +418,16 @@
 	}
 
 	// 发送请求
-	function upload(url) {
+	function upload(url, index) {
 		return new Promise((resolve, reject) => {
-			uni.uploadFile({
-				url: props.url, // 后端地址 实例:'https://pmccapi.wsandos.com//common/file/upload'
+			var uploadTask = uni.uploadFile({
+				url: props.url,
 				filePath: url,
 				name: 'file',
 				formData: {},
 				success: (res) => {
 					const data = JSON.parse(res.data);
-					// console.log(data);
+					// console.log('后端接口返回结果', data);
 					if (data.code === 200) {
 						resolve(data.data);
 					} else {
@@ -434,14 +446,31 @@
 					reject(e);
 				},
 			});
+			let lastProgress = 0; // 上次上传进度
+			let progressOfThisUpload = 0; // 当前上传进度
+			uploadTask.onProgressUpdate((res) => {
+				// console.log('已经上传的数据长度', res.totalBytesSent);
+				if (index) {
+					if (lastProgress) {
+						progressOfThisUpload = res.totalBytesSent;
+						progressCurrentSize.value += progressOfThisUpload - lastProgress;
+						lastProgress = progressOfThisUpload;
+					} else {
+						lastProgress = res.totalBytesSent;
+						progressCurrentSize.value += lastProgress;
+					}
+				} else {
+					progressCurrentSize.value = res.totalBytesSent;
+				}
+			});
 		});
 	}
 
 	// 点击文件
-	function clickFile(data, index) {
+	function clickFile(data) {
 		switch (data.type) {
 			case 'image':
-				preview(index);
+				preview(data.fullurl);
 				break;
 			case 'video':
 				clickVideo(data.fullurl);
@@ -452,14 +481,20 @@
 		}
 	}
 	// 点击图片 放大
-	function preview(index) {
+	function preview(url) {
 		let urls = [];
-		fileList.value.forEach((item) => {
-			if (item.type == 'image') {
-				urls.push(item.fullurl);
-			}
-		});
-		if (!props.multiple) index = 0;
+		let index = 0;
+		if (props.multiple) {
+			fileList.value.forEach((item) => {
+				if (item.type == 'image') {
+					urls.push(item.fullurl);
+				}
+			});
+			index = urls.indexOf(url);
+		} else {
+			urls = [url];
+			index = 0;
+		}
 		uni.previewImage({
 			current: [index],
 			urls,
@@ -476,19 +511,41 @@
 	}
 	// 保存文档并打开预览
 	function saveAndOpenDocument(data) {
-		let { fullurl: url, name } = data;
-		if (platform === 'web') {
-			const element = document.createElement('a');
-			element.style.display = 'none';
-			element.href = url;
-			element.download = name;
-			document.body.appendChild(element);
-			element.click();
-			document.body.removeChild(element);
-			window.open(url, '_blank');
+		let { fullurl, name } = data;
+		if (platform === 'web' || platform === 'h5') {
+			// 下载方式一
+			// fetch(fullurl)
+			// 	.then((response) => response.blob())
+			// 	.then((blob) => {
+			// 		const url = window.URL.createObjectURL(blob);
+			// 		const a = document.createElement('a');
+			// 		a.href = url;
+			// 		a.download = name;
+			// 		document.body.appendChild(a);
+			// 		a.click();
+			// 		document.body.removeChild(a);
+			// 		window.URL.revokeObjectURL(url);
+			// 	})
+			// 	.catch((error) => {
+			// 		console.error('下载失败:', error);
+			// 	});
+			// 下载方式二
+			// const a = document.createElement('a');
+			// a.href = fullurl;
+			// a.download = name; // 指定文件名
+			// document.body.appendChild(a);
+			// a.click();
+			// document.body.removeChild(a);
+			// 直接在新标签页打开文件
+			window.open(fullurl, '_blank');
+			// const fileUrl = encodeURIComponent(fullurl);
+			// 使用 Microsoft Office Online 预览
+			// window.open(`https://view.officeapps.live.com/op/view.aspx?src=${fileUrl}`, '_blank');
+			// 使用 Google Docs Viewer 预览
+			// window.open(`https://docs.google.com/gview?url=${fileUrl}&embedded=true`, '_blank');
 		} else {
 			uni.downloadFile({
-				url,
+				url: fullurl,
 				filePath: `${uni.env.USER_DATA_PATH}/${name}`, // 指定保存的路径并指定文件名
 				success: (res) => {
 					if (res.statusCode === 200) {
@@ -565,6 +622,10 @@
 				font-size: 28rpx;
 				color: #44aeed;
 				margin-left: 10rpx;
+				// 1行显示
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
 			}
 		}
 	}
