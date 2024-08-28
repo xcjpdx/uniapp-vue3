@@ -158,10 +158,11 @@
 	let fileList = ref([
 		{
 			fullurl:
-				'https://pmcctestapi.wsandos.com/uploads/20240827/751997c6ef44a256c8cd3325d4b27473.xls',
-			name: '组织生活.xls',
-			size: 4235,
-			type: 'document',
+				'https://pmcctestapi.wsandos.com/uploads/20240828/10f8bd60d79ccb13f639cd07fd7ea9f5.jpeg',
+			name: 'b7011656492ff205343b1aef3d5b081b.jpeg',
+			originalUrl: 'blob:http://localhost/feea0089-7fc5-4502-89a4-cf69c89bcbfc',
+			size: 38857,
+			type: 'image',
 		},
 	]);
 	function viewFileList() {

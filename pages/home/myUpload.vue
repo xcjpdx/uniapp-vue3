@@ -10,7 +10,7 @@
 				class="media-file"
 				v-for="(item, index) in fileList"
 				:key="index"
-				@click="clickFile(item, index)"
+				@click="clickFile(item)"
 			>
 				<image v-if="item.type == 'image'" :src="item.fullurl" mode="scaleToFill" />
 				<video
@@ -225,6 +225,7 @@
 				name: getNameInType(file),
 				size,
 				fullurl: res.fullurl,
+				originalUrl: url,
 			},
 		];
 
@@ -329,6 +330,7 @@
 				name: getNameInType(element),
 				size: element.size,
 				fullurl: res.fullurl,
+				originalUrl: element.url,
 			});
 		}
 
@@ -511,36 +513,17 @@
 	}
 	// 保存文档并打开预览
 	function saveAndOpenDocument(data) {
-		let { fullurl, name } = data;
+		let { fullurl, name, originalUrl } = data;
 		if (platform === 'web' || platform === 'h5') {
-			// 下载方式一
-			// fetch(fullurl)
-			// 	.then((response) => response.blob())
-			// 	.then((blob) => {
-			// 		const url = window.URL.createObjectURL(blob);
-			// 		const a = document.createElement('a');
-			// 		a.href = url;
-			// 		a.download = name;
-			// 		document.body.appendChild(a);
-			// 		a.click();
-			// 		document.body.removeChild(a);
-			// 		window.URL.revokeObjectURL(url);
-			// 	})
-			// 	.catch((error) => {
-			// 		console.error('下载失败:', error);
-			// 	});
-			// 下载方式二
-			// const a = document.createElement('a');
-			// a.href = fullurl;
-			// a.download = name; // 指定文件名
-			// document.body.appendChild(a);
-			// a.click();
-			// document.body.removeChild(a);
-			// 直接在新标签页打开文件
-			window.open(fullurl, '_blank');
-			// const fileUrl = encodeURIComponent(fullurl);
+			let a = document.createElement('a');
+			a.href = originalUrl;
+			a.download = name;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			const fileUrl = encodeURIComponent(fullurl);
 			// 使用 Microsoft Office Online 预览
-			// window.open(`https://view.officeapps.live.com/op/view.aspx?src=${fileUrl}`, '_blank');
+			window.open(`https://view.officeapps.live.com/op/view.aspx?src=${fileUrl}`, '_blank');
 			// 使用 Google Docs Viewer 预览
 			// window.open(`https://docs.google.com/gview?url=${fileUrl}&embedded=true`, '_blank');
 		} else {
