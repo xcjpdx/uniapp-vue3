@@ -3,6 +3,7 @@
     "dayjs": "^1.11.9",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",
+    "unplugin-auto-import": "^0.18.2",
     "uview-plus": "^3.1.36",
     "vue-i18n": "^9.14.0",
     "weixin-js-sdk": "^1.6.0"
