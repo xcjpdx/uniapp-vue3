@@ -16,8 +16,8 @@
  */
 
 /* 颜色变量 */
-$uni-color-theme:#3383F9; //项目主题颜色
-$uni-font-size-theme:28rpx;//项目基础字号
+$uni-color-theme: #3383f9; //项目主题颜色
+$uni-font-size-theme: 28rpx; //项目基础字号
 
 /* 行为相关颜色 */
 $uni-color-primary: #007aff;
@@ -26,32 +26,32 @@ $uni-color-warning: #f0ad4e;
 $uni-color-error: #dd524d;
 
 /* 文字基本颜色 */
-$uni-text-color:#333;//基本色
-$uni-text-color-inverse:#fff;//反色
-$uni-text-color-grey:#999;//辅助灰色，如加载更多的提示信息
+$uni-text-color: #333; //基本色
+$uni-text-color-inverse: #fff; //反色
+$uni-text-color-grey: #999; //辅助灰色，如加载更多的提示信息
 $uni-text-color-placeholder: #808080;
-$uni-text-color-disable:#c0c0c0;
+$uni-text-color-disable: #c0c0c0;
 
 /* 背景颜色 */
-$uni-bg-color:#ffffff;
-$uni-bg-color-grey:#f8f8f8;
-$uni-bg-color-hover:#f1f1f1;//点击状态颜色
-$uni-bg-color-mask:rgba(0, 0, 0, 0.4);//遮罩颜色
+$uni-bg-color: #ffffff;
+$uni-bg-color-grey: #f8f8f8;
+$uni-bg-color-hover: #f1f1f1; //点击状态颜色
+$uni-bg-color-mask: rgba(0, 0, 0, 0.4); //遮罩颜色
 
 /* 边框颜色 */
-$uni-border-color:#c8c7cc;
+$uni-border-color: #c8c7cc;
 
 /* 尺寸变量 */
 
 /* 文字尺寸 */
-$uni-font-size-sm:24rpx;
-$uni-font-size-base:28rpx;
-$uni-font-size-lg:32rpx;
+$uni-font-size-sm: 24rpx;
+$uni-font-size-base: 28rpx;
+$uni-font-size-lg: 32rpx;
 
 /* 图片尺寸 */
-$uni-img-size-sm:40rpx;
-$uni-img-size-base:52rpx;
-$uni-img-size-lg:80rpx;
+$uni-img-size-sm: 40rpx;
+$uni-img-size-base: 52rpx;
+$uni-img-size-lg: 80rpx;
 
 /* Border Radius */
 $uni-border-radius-sm: 4rpx;
@@ -73,19 +73,19 @@ $uni-spacing-col-lg: 24rpx;
 $uni-opacity-disabled: 0.3; // 组件禁用态的透明度
 
 /* 文章场景相关 */
-$uni-color-title: #2C405A; // 文章标题颜色
-$uni-font-size-title:40rpx;
+$uni-color-title: #2c405a; // 文章标题颜色
+$uni-font-size-title: 40rpx;
 $uni-color-subtitle: #555555; // 二级标题颜色
-$uni-font-size-subtitle:36rpx;
-$uni-color-paragraph: #3F536E; // 文章段落颜色
-$uni-font-size-paragraph:30rpx;
+$uni-font-size-subtitle: 36rpx;
+$uni-color-paragraph: #3f536e; // 文章段落颜色
+$uni-font-size-paragraph: 30rpx;
 
+// iOS安全区域
+$uni-safe-zone1: constant(safe-area-inset-bottom);
+$uni-safe-zone2: env(safe-area-inset-bottom);
 
-
-
-// new
 // 多行文字隐藏
-// @include feed($num)  $num为第几行后进行隐藏
+// @include feed($num) $num为第几行后进行隐藏
 @mixin feed($num) {
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
@@ -93,29 +93,26 @@ $uni-font-size-paragraph:30rpx;
 	overflow: hidden;
 }
 
-
-
-
 // 布局方式
 // 盒子内容垂直居中对齐
-// @extend %c-box-center;
-%c-box-center{
+// @extend %flex-center;
+%flex-center {
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
 // 盒子内容垂直两端对齐
-// @extend %c-box-space-center;
-%c-box-space-center{
+// @extend %flex-space-center;
+%flex-space-center {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 }
 
 // 定位垂直居中对齐
-// @extend %c-box-position-center;
-%c-box-position-center{
+// @extend %position-center;
+%position-center {
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -123,43 +120,28 @@ $uni-font-size-paragraph:30rpx;
 	right: 0;
 	margin: auto;
 }
-
 // 布局方式end
 
 // 按钮
-.p-button{
+.p-button {
 	height: 93rpx;
-	background: #2A6DF0;
+	background: #2a6df0;
 	border-radius: 12rpx;
 	padding: 0 24rpx;
 	background: $uni-color-theme;
 	font-weight: bold;
 	color: #fff;
-	@extend %c-box-center;
-	&.cancel{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	&.cancel {
 		background: $uni-bg-color-grey;
 		color: $uni-text-color;
 	}
-	&.danger{
-		background: #E60505;
+	&.danger {
+		background: #e60505;
 	}
-	&:active{
+	&:active {
 		opacity: 0.7;
 	}
-}
-
-// 格式化页面
-.page_box {
-	height: calc(100vh - constant(safe-area-inset-bottom));
-	height: calc(100vh - env(safe-area-inset-bottom));
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	overflow-x: hidden;
-}
-.content_box {
-	flex: 1;
-	overflow-y: auto;
-	box-sizing: border-box;
 }

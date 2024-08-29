@@ -137,7 +137,7 @@
 		for (let index = 0; index < 5; index++) {
 			cardList.value.push({
 				name: `卡片${index + 1}`,
-				url: 'https://img-blog.csdnimg.cn/3d809148c83f4720b5e2a6567f816d89.jpeg',
+				url: 'https://pic.20988.xyz/2024-08-29/1724899264-903459-preview.jpg',
 			});
 		}
 	});
@@ -200,19 +200,19 @@
 	import myBanner from './myBanner.vue';
 	let bannerList = ref([
 		{
-			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+			url: 'https://pic.20988.xyz/2024-08-29/1724899264-903459-preview.jpg',
 		},
 		{
-			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+			url: 'https://pic.20988.xyz/2024-08-29/1724899264-903459-preview.jpg',
 		},
 		{
-			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+			url: 'https://pic.20988.xyz/2024-08-29/1724899264-903459-preview.jpg',
 		},
 		{
-			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+			url: 'https://pic.20988.xyz/2024-08-29/1724899264-903459-preview.jpg',
 		},
 		{
-			url: 'https://img-blog.csdnimg.cn/5eb39ba135e644c6830e56a47ece3daf.png',
+			url: 'https://pic.20988.xyz/2024-08-29/1724899264-903459-preview.jpg',
 		},
 
 		// {
@@ -469,14 +469,18 @@
 		height: 100%;
 		background: rgba(0, 0, 0, 0.5);
 		z-index: 9999;
-		@extend %c-box-center;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 		flex-direction: column;
 		padding: 50prx 30rpx;
 		.canvas-btn {
 			margin-top: 30rpx;
 			padding: 10rpx 30rpx;
 			background: #6ef2a3;
-			@extend %c-box-center;
+			display: flex;
+			justify-content: center;
+			align-items: center;
 			border-radius: 30rpx;
 			font-size: 30rpx;
 			color: #fff;
