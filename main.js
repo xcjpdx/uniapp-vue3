@@ -4,8 +4,7 @@ import uviewPlus from 'uview-plus';
 import { getImg } from './utils/index.js';
 
 // pinia
-import { createPinia } from 'pinia';
-import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+import { setupStore } from './store/index.js';
 
 // dayjs
 import dayjs from 'dayjs';
@@ -40,9 +39,7 @@ export function createApp() {
 	uni.$u.config.unit = 'rpx';
 
 	// pinia
-	const pinia = createPinia();
-	pinia.use(piniaPluginPersistedstate);
-	app.use(pinia);
+	app.use(setupStore());
 
 	// 国际化
 	app.use(i18n);
