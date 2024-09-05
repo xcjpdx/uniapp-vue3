@@ -1,5 +1,10 @@
 import $http from '../js_sdk/zhouWei-request/requestConfig';
-// {load:false} 是否出现加载框
+/*
+* 说明：
+load:是否显示加载动画
+loadText:加载动画的文本
+*/
+// { load: true, loadText: '加载中...' }
 
 export const 接口名称 = (data) => $http.post('接口地址', data);
 

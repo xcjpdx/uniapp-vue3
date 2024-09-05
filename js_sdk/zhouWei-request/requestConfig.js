@@ -23,6 +23,8 @@ let $http = new request({
 		isPrompt: true,
 		// 是否显示加载动画
 		load: false,
+		// 加载动画的文本
+		loadText: '加载中...',
 		// 是否使用数据工厂
 		isFactory: true,
 	},
@@ -56,7 +58,7 @@ $http.requestStart = function (options) {
 		if (requestNum <= 0) {
 			//打开加载动画
 			uni.showLoading({
-				title: '加载中',
+				title: options.loadText,
 				mask: true,
 			});
 		}
