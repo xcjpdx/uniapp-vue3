@@ -6,9 +6,10 @@ loadText:加载动画的文本
 */
 // { load: true, loadText: '加载中...' }
 
-export const 接口名称 = (data) => $http.post('接口地址', data);
+export const 接口名称1 = (data) => $http.post('接口地址', data);
 
-export const 接口名称a = (data) =>
+export const 接口名称2 = (data) =>
 	$http.get('接口地址', data, {
 		load: true,
+		loadText: '加载中...',
 	});
