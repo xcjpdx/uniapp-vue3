@@ -163,7 +163,7 @@ $http.requestError = function (e) {
 				uni.clearStorageSync('token');
 				uni.removeStorageSync('userInfo');
 				uni.reLaunch({
-					url: '/pages/login/login',
+					url: '/pages/login/index',
 				});
 			}, 1500);
 		},
