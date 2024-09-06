@@ -93,13 +93,6 @@
 	import { onLoad } from '@dcloudio/uni-app';
 	const { proxy } = getCurrentInstance();
 
-	let platform = '';
-	onMounted(() => {
-		const systemInfo = uni.getSystemInfoSync();
-		platform = systemInfo.uniPlatform;
-		// console.log('平台', platform);
-	});
-
 	const props = defineProps({
 		url: {
 			type: String,
@@ -513,8 +506,9 @@
 	}
 	// 保存文档并打开预览
 	function saveAndOpenDocument(data) {
+		let platform = uni.getSystemInfoSync().uniPlatform;
 		let { fullurl, name, originalUrl } = data;
-		if (platform === 'web' || platform === 'h5') {
+		if (platform === 'web') {
 			let a = document.createElement('a');
 			a.href = originalUrl;
 			a.download = name;

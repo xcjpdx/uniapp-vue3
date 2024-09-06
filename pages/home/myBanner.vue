@@ -26,7 +26,10 @@
 					<view
 						class="main-card"
 						:class="swiperIndex == index ? 'current-card' : 'side-card'"
-						:style="{ 'border-radius': props.radius }"
+						:style="{
+							'border-radius': props.radius,
+							margin: swiperIndex == index ? `0 ${props.spacing}` : '',
+						}"
 					>
 						<image :src="item.url" mode="scaleToFill" v-if="item.urlType == 'image'" />
 						<video
@@ -70,68 +73,61 @@
 	const { proxy } = getCurrentInstance();
 	const example = proxy;
 	const props = defineProps({
-		// 轮播图类型 1 普通轮播图 2 卡片式轮播图
-		type: {
-			type: String,
-			default: '1',
-		},
-		// 圆角
-		radius: {
-			type: String,
-			default: '30rpx',
-		},
-		// 前边距，可用于露出前一项的一小部分(仅type为2时生效)
-		previousMargin: {
-			type: String,
-			default: '',
-		},
-		// 后边距 ，可用于露出后一项的一小部分(仅type为2时生效)
-		nextMargin: {
-			type: String,
-			default: '',
-		},
-		// 是否显示指示器
-		isIndicator: {
-			type: Boolean,
-			default: true,
-		},
-		// 轮播图类型 1 指示器分开展示 2 指示器在一个滑块中
-		indicatorType: {
-			type: String,
-			default: '1',
-		},
-		// 轮播图数据
 		bannerList: {
 			type: Array,
 			required: true,
 		},
-		// 配置数据的字段
 		option: {
 			type: Object,
 			default: {
-				url: 'url', // 图片或视频的链接
-				poster: 'poster', // 视频封面的图片网络资源地址
+				url: 'url', // 图片或视频资源的字段
+				poster: 'poster', // 视频封面的图片网络资源的字段
+				urlType: '', // 资源类型(image/video)
 			},
 		},
-		// 轮播图高度
 		height: {
 			type: String,
-			default: '512rpx',
+			default: '500rpx',
 		},
-		// 是否开启循环轮播
 		circular: {
 			type: Boolean,
 			default: true,
 		},
-		// 是否自动轮播
 		autoplay: {
 			type: Boolean,
 			default: true,
 		},
-		// 自动轮播的时间间隔 单位 ms
 		interval: {
 			type: Number,
 			default: 3000,
+		},
+		type: {
+			type: String,
+			default: '1',
+		},
+		previousMargin: {
+			type: String,
+			default: '',
+		},
+		nextMargin: {
+			type: String,
+			default: '',
+		},
+		spacing: {
+			type: String,
+			default: '20rpx',
+		},
+		radius: {
+			type: String,
+			default: '30rpx',
+		},
+		isIndicator: {
+			type: Boolean,
+			default: true,
+		},
+		indicatorType: {
+			type: String,
+			default: '1',
 		},
 	});
 
@@ -147,8 +143,9 @@
 			option = {
 				url: props.option.url || 'url',
 				poster: props.option.poster || 'poster',
+				urlType: props.option.urlType || '',
 			};
-			let platform = uni.getSystemInfoSync().platform;
+			let osName = uni.getSystemInfoSync().osName;
 			if (props.type == 2) {
 				previousMargin.value = props.previousMargin || '60rpx';
 				nextMargin.value = props.nextMargin || '60rpx';
@@ -167,15 +164,15 @@
 								poster = item[key];
 							}
 						}
-						let urlType = judgeFileType(url);
-						if (urlType == 'video' && platform == 'ios') {
+						let urlType = option.urlType || judgeFileType(url);
+						if (urlType == 'video' && osName == 'ios') {
 							isIndicator.value = false;
 						}
 						return {
 							...item,
-							urlType,
 							url,
 							poster,
+							urlType,
 						};
 					});
 				}
@@ -188,8 +185,47 @@
 
 	// 根据url判断文件类型
 	function judgeFileType(url) {
-		let imageType = ['png', 'jpg', 'jpeg'];
-		let videoType = ['mp4', 'mov', 'mkv'];
+		let imageType = [
+			'jpg',
+			'jpeg',
+			'png',
+			'gif',
+			'bmp',
+			'tiff',
+			'tif',
+			'webp',
+			'heic',
+			'ico',
+			'svg',
+			'eps',
+			'ai',
+			'raw',
+			'psd',
+			'xcf',
+			'tga',
+			'dds',
+		];
+		let videoType = [
+			'mp4',
+			'mkv',
+			'avi',
+			'mov',
+			'wmv',
+			'flv',
+			'webm',
+			'mpg',
+			'mpeg',
+			'3gp',
+			'm4v',
+			'vob',
+			'rmvb',
+			'f4v',
+			'ts',
+			'ogv',
+			'mxf',
+			'asf',
+			'swf',
+		];
 		if (imageType.includes(url.split('.').pop())) {
 			return 'image';
 		} else if (videoType.includes(url.split('.').pop())) {
@@ -224,7 +260,6 @@
 			swiper-item {
 				display: grid;
 				align-items: center;
-				border-radius: 30rpx;
 				overflow: hidden;
 				transform: rotate(0deg);
 				-webkit-transform: rotate(0deg);
@@ -239,14 +274,12 @@
 			}
 		}
 		.banner-video {
-			border-radius: 30rpx;
 			overflow: hidden;
 			transform: rotate(0deg);
 			-webkit-transform: rotate(0deg);
 		}
 		.main-card {
 			overflow: hidden;
-			margin: 0 10rpx;
 			transition: all 0.6s;
 		}
 		.current-card {

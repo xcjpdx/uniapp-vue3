@@ -124,3 +124,31 @@ export const getSetting = function (scopeName, tip = '请在设置中开启授�
 		},
 	});
 };
+// 获取页面路径以及参数
+export const getPagePath = function () {
+	const pages = getCurrentPages();
+	const currentPage = pages[pages.length - 1];
+	const currentPath = currentPage.__route__;
+	const query = currentPage.options;
+	let path = '/' + currentPath;
+	Object.entries(query).forEach(([key, value], index) => {
+		if (index == 0) {
+			path += '?';
+		}
+		path += `${key}=${value}${index < Object.keys(query).length - 1 ? '&' : ''}`;
+	});
+	console.log('页面路径以及参数:', path);
+	return path;
+};
+/*
+获取系统名称以及运行平台
+osName:系统名称, 返回值:ios、android、windows、macos、linux
+platform:运行平台, 返回值:app、web、mp-weixin 等等 参考文档:https://uniapp.dcloud.net.cn/api/system/info.html#uniplatform
+*/
+export const getSystemInfo = function () {
+	let system = uni.getSystemInfoSync();
+	return {
+		osName: system.osName, // 系统名称
+		platform: system.uniPlatform, // 运行平台
+	};
+};
