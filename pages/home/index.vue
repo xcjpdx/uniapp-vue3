@@ -10,8 +10,8 @@
 			url="https://pmcctestapi.wsandos.com/common/file/upload"
 			accept="all"
 			:multiple="true"
-			maxSize="1"
-			maxSizeAll="5"
+			maxSize="0.02"
+			maxSizeAll="0.2"
 			v-model:fileList="fileList"
 		></myUpload>
 		<button @click="viewFileList">点击查看文件列表</button>
@@ -156,16 +156,7 @@
 	}
 
 	import myUpload from './myUpload.vue';
-	let fileList = ref([
-		{
-			name: '背景图.jpg',
-			originalUrl: 'blob:http://localhost/18423c98-f271-47b0-8780-ee78ec8be2d5',
-			size: 427058,
-			type: 'image',
-			url: 'https://pmcctestapi.wsandos.com/uploads/20240909/4797c6f5dd6f95659c02c32b69a107a6.jpg',
-			uuid: 'image4270588057053557',
-		},
-	]);
+	let fileList = ref([]);
 	function viewFileList() {
 		console.log('文件列表', fileList.value);
 	}

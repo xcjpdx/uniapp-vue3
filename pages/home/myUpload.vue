@@ -129,9 +129,11 @@
 	let fileList = defineModel('fileList'); // 文件列表
 	const mediaFileList = ref([]);
 	const otherFileList = ref([]);
+	let allFileSize = 0; // 总文件大小
 	watch(
 		() => fileList.value.length,
 		() => {
+			renewAllFileSize();
 			mediaFileList.value = fileList.value.filter(
 				(item) => item.type == 'image' || item.type == 'video'
 			);
@@ -143,6 +145,13 @@
 			immediate: true,
 		}
 	);
+	// 更新总文件大小
+	function renewAllFileSize() {
+		allFileSize = 0;
+		fileList.value.forEach((item) => {
+			allFileSize += item.size;
+		});
+	}
 
 	// 进度条相关
 	import myProgress from './myProgress.vue';
@@ -537,7 +546,6 @@
 	// 上传错误提示相关
 	const isTip = ref(false);
 	const tipFileList = ref([]);
-	let allFileSize = 0; // 总文件大小
 	// 多文件上传
 	async function uploadFiles(file) {
 		tipFileList.value = [];
@@ -576,13 +584,14 @@
 			// 检查所有文件的总大小是否超过限制
 			let maxSizeAll = props.maxSizeAll * 1024 * 1024;
 			if (maxSizeAll) {
+				let allSize = allFileSize;
 				let arrIndex = -1;
 				let unqualifiedArr = []; // 不符合限制的文件
 				let qualifiedArr = []; // 符合限制的文件
 				for (let index = 0; index < file.length; index++) {
 					const size = file[index].size;
-					allFileSize += size;
-					if (allFileSize > maxSizeAll) {
+					allSize += size;
+					if (allSize > maxSizeAll) {
 						arrIndex = index;
 						break;
 					}
@@ -632,7 +641,6 @@
 				}
 				fileList.value = [...fileList.value, ...arr];
 			}
-			renewAllFileSize();
 		} catch (error) {
 			console.log(error);
 		}
@@ -698,13 +706,6 @@
 	// 生成一个唯一标识:type+size+10位随机数
 	function getUniqueKey(type, size) {
 		return type + size + Math.ceil(Math.random() * 10000000000);
-	}
-	// 更新总文件大小
-	function renewAllFileSize() {
-		allFileSize = 0;
-		fileList.value.forEach((item) => {
-			allFileSize += item.size;
-		});
 	}
 
 	// 发送请求
