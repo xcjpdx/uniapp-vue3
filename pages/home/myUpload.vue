@@ -14,17 +14,17 @@
 				:show-center-play-btn="false"
 				object-fit="fill"
 			></video>
-			<div class="media-item-delete" @click.stop="deleteFile(item.type, item.uuid)">X</div>
+			<div class="media-item-delete" @click.stop="deleteFile(item.uuid)">X</div>
 		</div>
 	</div>
 	<div
 		class="other-box"
-		v-for="(item, index) in documentFileList"
+		v-for="(item, index) in otherFileList"
 		:key="index"
 		@click="clickFile(item)"
 	>
 		<div class="other-box-name">{{ item.name }}</div>
-		<div class="other-box-delete" @click.stop="deleteFile(item.type, item.uuid)">删除</div>
+		<div class="other-box-delete" @click.stop="deleteFile(item.uuid)">删除</div>
 	</div>
 	<div
 		class="add-box"
@@ -39,22 +39,28 @@
 
 	<div class="tip-overlay" v-if="isTip">
 		<div class="tip-title">以下文件上传失败</div>
-		<div class="tip-reasons">{{ tipReasons }}</div>
 		<div class="tip-box">
-			<div class="tip-media-box">
-				<div class="tip-media-item" v-for="(item, index) in tipMediaFileList" :key="index">
-					<image v-if="item.type == 'image'" :src="item.url" mode="scaleToFill" />
-					<video
-						v-if="item.type == 'video'"
-						:src="item.url"
-						:controls="true"
-						:show-center-play-btn="false"
-						object-fit="fill"
-					></video>
+			<div class="tip-box-item" v-for="(tipFile, index) in tipFileList" :key="index">
+				<div class="tip-box-item-reasons">{{ tipFile.tipReasons }}</div>
+				<div class="tip-media-box">
+					<div
+						class="tip-media-item"
+						v-for="(item, index) in tipFile.tipMediaFileList"
+						:key="index"
+					>
+						<image v-if="item.type == 'image'" :src="item.url" mode="scaleToFill" />
+						<video
+							v-if="item.type == 'video'"
+							:src="item.url"
+							:controls="true"
+							:show-center-play-btn="false"
+							object-fit="fill"
+						></video>
+					</div>
 				</div>
-			</div>
-			<div class="tip-other-box" v-for="(item, index) in tipOtherFileList" :key="index">
-				{{ item.name }}
+				<div class="tip-other-box" v-for="(item, index) in tipFile.tipOtherFileList" :key="index">
+					{{ item.name }}
+				</div>
 			</div>
 		</div>
 		<div class="tip-close" @click="isTip = false">关闭</div>
@@ -115,9 +121,28 @@
 			type: Number,
 			default: 9,
 		},
+		extension: {
+			type: Array,
+			default: [],
+		},
 	});
 	let fileList = defineModel('fileList'); // 文件列表
-	const emit = defineEmits(['uploadCompleted']);
+	const mediaFileList = ref([]);
+	const otherFileList = ref([]);
+	watch(
+		() => fileList.value.length,
+		() => {
+			mediaFileList.value = fileList.value.filter(
+				(item) => item.type == 'image' || item.type == 'video'
+			);
+			otherFileList.value = fileList.value.filter(
+				(item) => item.type == 'document' || item.type == 'other'
+			);
+		},
+		{
+			immediate: true,
+		}
+	);
 
 	// 进度条相关
 	import myProgress from './myProgress.vue';
@@ -213,6 +238,7 @@
 		uni.chooseImage({
 			count: props.multiple ? props.maxCount : 1,
 			sourceType: props.sourceType,
+			extension: props.extension,
 			success: (res) => {
 				let arr = res.tempFiles.map((item) => {
 					return {
@@ -234,6 +260,7 @@
 			compressed: props.compressed,
 			maxDuration: props.maxDuration,
 			camera: props.camera,
+			extension: props.extension,
 			success: (res) => {
 				let arr = [
 					{
@@ -267,6 +294,7 @@
 		uni.chooseFile({
 			count: props.multiple ? props.maxCount : 1,
 			sourceType: props.sourceType,
+			extension: props.extension,
 			success: (res) => {
 				let arr = res.tempFiles.map((item) => {
 					return {
@@ -348,6 +376,7 @@
 		wx.chooseMessageFile({
 			count: props.multiple ? props.maxCount : 1,
 			type: 'file',
+			extension: props.extension,
 			success: (res) => {
 				let arr = res.tempFiles.map((item) => {
 					return {
@@ -387,7 +416,15 @@
 			count: props.multiple ? props.maxCount : 1,
 			sourceType: props.sourceType,
 			success: (res) => {
-				console.log(res.tempFiles);
+				let arr = res.tempFiles.map((item) => {
+					return {
+						type: 'image',
+						url: item.path,
+						size: item.size,
+						name: item.name || '',
+					};
+				});
+				afterRead(arr);
 			},
 			fail: () => {},
 		});
@@ -400,7 +437,15 @@
 			maxDuration: props.maxDuration,
 			camera: props.camera,
 			success: (res) => {
-				console.log(res);
+				let arr = [
+					{
+						type: 'video',
+						url: res.tempFilePath,
+						size: res.size,
+						name: res.name || '',
+					},
+				];
+				afterRead(arr);
 			},
 			fail: () => {},
 		});
@@ -436,50 +481,35 @@
 			} else {
 				await uploadFile(file[0]);
 			}
+			if (tipFileList.value.length) {
+				isTip.value = true;
+			}
 		} catch {
 			isFailed.value = true;
 		}
 		state.value = false;
 	}
 
-	// 上传错误提示相关
-	const isTip = ref(false);
-	const tipReasons = ref('');
-	const tipMediaFileList = ref([]);
-	const tipOtherFileList = ref([]);
-
-	const mediaFileList = ref([]);
-	const documentFileList = ref([]);
-
 	// 单文件上传
 	async function uploadFile(file) {
 		try {
 			let { type, size, url, name } = file;
 
-			// 进行文件筛选 根据文件类型筛选(只保留图片和视频还有文档文件)
-			if (type == 'other') {
-				setTimeout(() => {
-					uni.showToast({ title: '只支持上传图片、视频、文档文件', icon: 'none' });
-				}, 1500);
-				isFailed.value = true;
-				return;
-			}
-
 			// 检查文件大小是否超过限制
-			let maxSize = Number(props.maxSize);
-			if (maxSize && Math.ceil(size / 1024 / 1024) > maxSize) {
+			let maxSize = props.maxSize * 1024 * 1024;
+			if (maxSize && size > maxSize) {
 				setTimeout(() => {
-					uni.showToast({ title: `最多上传 ${maxSize} MB 的文件`, icon: 'none' });
+					uni.showToast({ title: `最多上传 ${maxSize / 1024 / 1024} MB 的文件`, icon: 'none' });
 				}, 1500);
 				isFailed.value = true;
 				return;
 			}
 
 			// 检查所有文件的总大小是否超过限制
-			let maxSizeAll = Number(props.maxSizeAll);
-			if (maxSizeAll && Math.ceil(size / 1024 / 1024) > maxSizeAll) {
+			let maxSizeAll = props.maxSizeAll * 1024 * 1024;
+			if (maxSizeAll && size > maxSizeAll) {
 				setTimeout(() => {
-					uni.showToast({ title: `最多上传 ${maxSizeAll} MB 的文件`, icon: 'none' });
+					uni.showToast({ title: `最多上传 ${maxSizeAll / 1024 / 1024} MB 的文件`, icon: 'none' });
 				}, 1500);
 				isFailed.value = true;
 				return;
@@ -490,115 +520,108 @@
 
 			// 开始上传
 			let res = await upload(url, 0);
-			mediaFileList.value = [];
-			documentFileList.value = [];
-			if (type == 'document') {
-				documentFileList.value.push({
+			fileList.value = [
+				{
 					type,
 					name,
 					size,
 					url: res.fullurl,
 					originalUrl: url,
 					uuid: getUniqueKey(type, size),
-				});
-			} else {
-				mediaFileList.value.push({
-					type,
-					name,
-					size,
-					url: res.fullurl,
-					originalUrl: url,
-					uuid: getUniqueKey(type, size),
-				});
-			}
-			fileList.value = [...mediaFileList.value, ...documentFileList.value];
-
-			emit('uploadCompleted', fileList.value[0]);
+				},
+			];
 		} catch (error) {
 			console.log(error);
 		}
 	}
+	// 上传错误提示相关
+	const isTip = ref(false);
+	const tipFileList = ref([]);
+	let allFileSize = 0; // 总文件大小
 	// 多文件上传
 	async function uploadFiles(file) {
+		tipFileList.value = [];
 		try {
-			// 进行文件筛选 根据文件类型筛选(只保留图片和视频还有文档文件)
-			if (props.accept == 'file' || props.accept == 'all') {
-				tipMediaFileList.value = [];
-				tipOtherFileList.value = [];
-				file.forEach((item) => {
-					if (item.type == 'other') {
-						tipOtherFileList.value.push(item);
-					}
-				});
-				if (tipOtherFileList.value.length) {
-					tipReasons.value = '只支持上传图片、视频、文档文件';
-					isTip.value = true;
-					isFailed.value = true;
-					return;
-				}
-			}
-
 			// 检查所有的文件大小是否超过限制
-			let maxSize = Number(props.maxSize);
+			let maxSize = props.maxSize * 1024 * 1024;
 			if (maxSize) {
-				tipMediaFileList.value = [];
-				tipOtherFileList.value = [];
+				let unqualifiedArr = []; // 不符合限制的文件
+				let qualifiedArr = []; // 符合限制的文件
 				file.forEach((item) => {
-					if (Math.ceil(item.size / 1024 / 1024) > maxSize) {
-						if (item.type == 'image' || item.type == 'video') {
-							tipMediaFileList.value.push(item);
-						} else {
-							tipOtherFileList.value.push(item);
-						}
+					if (item.size > maxSize) {
+						unqualifiedArr.push(item);
+					} else {
+						qualifiedArr.push(item);
 					}
 				});
-				if (tipMediaFileList.value.length || tipOtherFileList.value.length) {
-					tipReasons.value = `文件大小不能超过 ${maxSize} MB `;
-					isTip.value = true;
-					isFailed.value = true;
-					return;
+				if (unqualifiedArr.length) {
+					let tipMediaFileList = [];
+					let tipOtherFileList = [];
+					unqualifiedArr.forEach((item) => {
+						if (item.type == 'image' || item.type == 'video') {
+							tipMediaFileList.push(item);
+						} else {
+							tipOtherFileList.push(item);
+						}
+					});
+					tipFileList.value.push({
+						tipReasons: `失败原因 : 文件大小不能超过 ${maxSize / 1024 / 1024} MB`,
+						tipMediaFileList,
+						tipOtherFileList,
+					});
 				}
+				file = qualifiedArr;
 			}
 
 			// 检查所有文件的总大小是否超过限制
-			let maxSizeAll = Number(props.maxSizeAll);
+			let maxSizeAll = props.maxSizeAll * 1024 * 1024;
 			if (maxSizeAll) {
-				let fileArrSize = 0;
-				file.forEach((item) => {
-					fileArrSize += item.size;
-				});
-				if (Math.ceil(fileArrSize / 1024 / 1024) > maxSizeAll) {
-					setTimeout(() => {
-						uni.showToast({
-							title: `所有文件的大小不能超过 ${maxSizeAll} MB`,
-							icon: 'none',
-						});
-					}, 1500);
-					isFailed.value = true;
-					return;
+				let arrIndex = -1;
+				let unqualifiedArr = []; // 不符合限制的文件
+				let qualifiedArr = []; // 符合限制的文件
+				for (let index = 0; index < file.length; index++) {
+					const size = file[index].size;
+					allFileSize += size;
+					if (allFileSize > maxSizeAll) {
+						arrIndex = index;
+						break;
+					}
 				}
-			}
+				if (arrIndex == -1) {
+					qualifiedArr = file;
+				} else {
+					unqualifiedArr = file.slice(arrIndex, file.length);
+					qualifiedArr = file.slice(0, arrIndex);
+				}
 
-			progressCurrentSize.value = 0;
-			getTotalSize(file);
+				if (unqualifiedArr.length) {
+					let tipMediaFileList = [];
+					let tipOtherFileList = [];
+					unqualifiedArr.forEach((item) => {
+						if (item.type == 'image' || item.type == 'video') {
+							tipMediaFileList.push(item);
+						} else {
+							tipOtherFileList.push(item);
+						}
+					});
+					tipFileList.value.push({
+						tipReasons: `失败原因 : 所有文件的大小不能超过 ${maxSizeAll / 1024 / 1024} MB`,
+						tipMediaFileList,
+						tipOtherFileList,
+					});
+				}
+				file = qualifiedArr;
+			}
 
 			// 开始上传
-			mediaFileList.value = [];
-			documentFileList.value = [];
-			for (let index = 0; index < file.length; index++) {
-				let element = file[index];
-				let res = await upload(element.url, index);
-				if (element.type == 'document') {
-					documentFileList.value.push({
-						type: element.type,
-						name: element.name,
-						size: element.size,
-						url: res.fullurl,
-						originalUrl: element.url,
-						uuid: getUniqueKey(element.type, element.size),
-					});
-				} else {
-					mediaFileList.value.push({
+			if (file.length) {
+				progressCurrentSize.value = 0;
+				getTotalSize(file);
+				let arr = [];
+				for (let index = 0; index < file.length; index++) {
+					let element = file[index];
+					let res = await upload(element.url, index);
+					arr.push({
 						type: element.type,
 						name: element.name,
 						size: element.size,
@@ -607,10 +630,9 @@
 						uuid: getUniqueKey(element.type, element.size),
 					});
 				}
+				fileList.value = [...fileList.value, ...arr];
 			}
-			fileList.value = [...mediaFileList.value, ...documentFileList.value];
-
-			emit('uploadCompleted', fileList.value);
+			renewAllFileSize();
 		} catch (error) {
 			console.log(error);
 		}
@@ -677,6 +699,13 @@
 	function getUniqueKey(type, size) {
 		return type + size + Math.ceil(Math.random() * 10000000000);
 	}
+	// 更新总文件大小
+	function renewAllFileSize() {
+		allFileSize = 0;
+		fileList.value.forEach((item) => {
+			allFileSize += item.size;
+		});
+	}
 
 	// 发送请求
 	function upload(url, index) {
@@ -733,9 +762,8 @@
 			case 'image':
 				preview(data.url);
 				break;
-			case 'video':
-				break;
 			case 'document':
+			case 'other':
 				saveAndOpenDocument(data);
 				break;
 		}
@@ -757,10 +785,8 @@
 				index = 0;
 			}
 			uni.previewImage({
-				current: [index],
+				current: index,
 				urls,
-				loop: true,
-				indicator: 'none',
 			});
 		} catch (error) {
 			console.log(error);
@@ -768,7 +794,7 @@
 	}
 	// 保存文档并打开预览
 	function saveAndOpenDocument(data) {
-		let { url, name, originalUrl } = data;
+		let { url, name, originalUrl, type } = data;
 		if (platform === 'web') {
 			let a = document.createElement('a');
 			a.href = originalUrl;
@@ -776,35 +802,33 @@
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
-			const fileUrl = encodeURIComponent(url);
-			// 使用 Microsoft Office Online 预览
-			window.open(`https://view.officeapps.live.com/op/view.aspx?src=${fileUrl}`, '_blank');
-			// 使用 Google Docs Viewer 预览
-			// window.open(`https://docs.google.com/gview?url=${fileUrl}&embedded=true`, '_blank');
+			if (type == 'document') {
+				const fileUrl = encodeURIComponent(url);
+				// // 使用 Microsoft Office Online 预览
+				window.open(`https://view.officeapps.live.com/op/view.aspx?src=${fileUrl}`, '_blank');
+				// // 使用 Google Docs Viewer 预览
+				// // window.open(`https://docs.google.com/gview?url=${fileUrl}&embedded=true`, '_blank');
+			}
 		} else {
 			uni.downloadFile({
 				url: url,
 				filePath: `${uni.env.USER_DATA_PATH}/${name}`, // 指定保存的路径并指定文件名
 				success: (res) => {
 					if (res.statusCode === 200) {
-						uni.openDocument({
-							filePath: res.filePath,
-							showMenu: true,
-						});
+						if (type == 'document') {
+							uni.openDocument({
+								filePath: res.filePath,
+								showMenu: true,
+							});
+						}
 					}
 				},
 			});
 		}
 	}
 	// 删除文件
-	function deleteFile(type, uuid) {
-		if (type == 'document') {
-			documentFileList.value = documentFileList.value.filter((item) => item.uuid != uuid);
-		} else {
-			mediaFileList.value = mediaFileList.value.filter((item) => item.uuid != uuid);
-		}
-		fileList.value = [...mediaFileList.value, ...documentFileList.value];
-		emit('uploadCompleted', fileList.value);
+	function deleteFile(uuid) {
+		fileList.value = fileList.value.filter((item) => item.uuid != uuid);
 	}
 </script>
 
@@ -903,45 +927,47 @@
 			color: #44aeed;
 			margin: 20rpx;
 		}
-		.tip-reasons {
-			font-weight: 700;
-			font-size: 28rpx;
-			color: #44aeed;
-			margin: 20rpx;
-		}
 		.tip-box {
 			flex: 1;
 			margin: 20rpx;
 			overflow-y: auto;
-			.tip-media-box {
-				display: flex;
-				align-items: center;
-				flex-wrap: wrap;
-				.tip-media-item {
-					width: 200rpx;
-					height: 200rpx;
-					border-radius: 20rpx;
-					overflow: hidden;
-					margin: 15rpx;
-					image,
-					video {
-						width: 100%;
-						height: 100%;
+			.tip-box-item {
+				.tip-box-item-reasons {
+					font-weight: 700;
+					font-size: 28rpx;
+					color: #44aeed;
+					margin-bottom: 20rpx;
+				}
+				.tip-media-box {
+					display: flex;
+					align-items: center;
+					flex-wrap: wrap;
+					.tip-media-item {
+						width: 200rpx;
+						height: 200rpx;
+						border-radius: 20rpx;
+						overflow: hidden;
+						margin: 15rpx;
+						image,
+						video {
+							width: 100%;
+							height: 100%;
+						}
 					}
 				}
-			}
-			.tip-other-box {
-				padding: 10rpx 20rpx;
-				background: #ccc;
-				margin: 20rpx 0;
-				width: 100%;
-				font-weight: 700;
-				font-size: 28rpx;
-				color: #44aeed;
-				// 1行显示
-				white-space: nowrap;
-				overflow: hidden;
-				text-overflow: ellipsis;
+				.tip-other-box {
+					padding: 10rpx 20rpx;
+					background: #ccc;
+					margin: 20rpx 0;
+					width: 100%;
+					font-weight: 700;
+					font-size: 28rpx;
+					color: #44aeed;
+					// 1行显示
+					white-space: nowrap;
+					overflow: hidden;
+					text-overflow: ellipsis;
+				}
 			}
 		}
 		.tip-close {

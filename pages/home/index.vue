@@ -8,10 +8,12 @@
 	<div style="padding: 20rpx">
 		<myUpload
 			url="https://pmcctestapi.wsandos.com/common/file/upload"
-			accept="file"
+			accept="all"
 			:multiple="true"
+			maxSize="1"
+			maxSizeAll="5"
+			:extension="['.jpg']"
 			v-model:fileList="fileList"
-			@uploadCompleted="uploadCompleted"
 		></myUpload>
 		<button @click="viewFileList">点击查看文件列表</button>
 	</div>
@@ -157,19 +159,16 @@
 	import myUpload from './myUpload.vue';
 	let fileList = ref([
 		{
-			fullurl:
-				'https://pmcctestapi.wsandos.com/uploads/20240828/10f8bd60d79ccb13f639cd07fd7ea9f5.jpeg',
-			name: 'b7011656492ff205343b1aef3d5b081b.jpeg',
-			originalUrl: 'blob:http://localhost/feea0089-7fc5-4502-89a4-cf69c89bcbfc',
-			size: 38857,
+			name: '背景图.jpg',
+			originalUrl: 'blob:http://localhost/18423c98-f271-47b0-8780-ee78ec8be2d5',
+			size: 427058,
 			type: 'image',
+			url: 'https://pmcctestapi.wsandos.com/uploads/20240909/4797c6f5dd6f95659c02c32b69a107a6.jpg',
+			uuid: 'image4270588057053557',
 		},
 	]);
 	function viewFileList() {
 		console.log('文件列表', fileList.value);
-	}
-	function uploadCompleted(file) {
-		console.log('回调函数', file);
 	}
 
 	import DateTimePicker from './DateTimePicker.vue';
