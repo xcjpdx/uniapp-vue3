@@ -12,7 +12,6 @@
 			:multiple="true"
 			maxSize="1"
 			maxSizeAll="5"
-			:extension="['.jpg']"
 			v-model:fileList="fileList"
 		></myUpload>
 		<button @click="viewFileList">点击查看文件列表</button>

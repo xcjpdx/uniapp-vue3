@@ -238,7 +238,7 @@
 		uni.chooseImage({
 			count: props.multiple ? props.maxCount : 1,
 			sourceType: props.sourceType,
-			extension: props.extension,
+			extension: props.extension.length ? props.extension : [''],
 			success: (res) => {
 				let arr = res.tempFiles.map((item) => {
 					return {
@@ -260,7 +260,7 @@
 			compressed: props.compressed,
 			maxDuration: props.maxDuration,
 			camera: props.camera,
-			extension: props.extension,
+			extension: props.extension.length ? props.extension : [''],
 			success: (res) => {
 				let arr = [
 					{
@@ -294,7 +294,7 @@
 		uni.chooseFile({
 			count: props.multiple ? props.maxCount : 1,
 			sourceType: props.sourceType,
-			extension: props.extension,
+			extension: props.extension.length ? props.extension : [''],
 			success: (res) => {
 				let arr = res.tempFiles.map((item) => {
 					return {
@@ -376,7 +376,7 @@
 		wx.chooseMessageFile({
 			count: props.multiple ? props.maxCount : 1,
 			type: 'file',
-			extension: props.extension,
+			extension: props.extension.length ? props.extension : [''],
 			success: (res) => {
 				let arr = res.tempFiles.map((item) => {
 					return {
@@ -525,8 +525,8 @@
 					type,
 					name,
 					size,
-					url: res.fullurl,
-					originalUrl: url,
+					url,
+					remoteUrl: res.fullurl,
 					uuid: getUniqueKey(type, size),
 				},
 			];
@@ -625,8 +625,8 @@
 						type: element.type,
 						name: element.name,
 						size: element.size,
-						url: res.fullurl,
-						originalUrl: element.url,
+						url: element.url,
+						remoteUrl: res.fullurl,
 						uuid: getUniqueKey(element.type, element.size),
 					});
 				}
@@ -794,16 +794,16 @@
 	}
 	// 保存文档并打开预览
 	function saveAndOpenDocument(data) {
-		let { url, name, originalUrl, type } = data;
+		let { url, name, type, remoteUrl } = data;
 		if (platform === 'web') {
 			let a = document.createElement('a');
-			a.href = originalUrl;
+			a.href = url;
 			a.download = name;
 			document.body.appendChild(a);
 			a.click();
 			document.body.removeChild(a);
 			if (type == 'document') {
-				const fileUrl = encodeURIComponent(url);
+				const fileUrl = encodeURIComponent(remoteUrl);
 				// // 使用 Microsoft Office Online 预览
 				window.open(`https://view.officeapps.live.com/op/view.aspx?src=${fileUrl}`, '_blank');
 				// // 使用 Google Docs Viewer 预览
