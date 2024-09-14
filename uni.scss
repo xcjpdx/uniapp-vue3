@@ -80,10 +80,6 @@ $uni-font-size-subtitle: 36rpx;
 $uni-color-paragraph: #3f536e; // 文章段落颜色
 $uni-font-size-paragraph: 30rpx;
 
-// iOS安全区域
-$uni-safe-zone1: constant(safe-area-inset-bottom);
-$uni-safe-zone2: env(safe-area-inset-bottom);
-
 // 多行文字隐藏
 // @include feed($num) $num为第几行后进行隐藏
 @mixin feed($num) {

@@ -142,14 +142,24 @@ export const getPagePath = function () {
 	return path;
 };
 /*
-获取系统名称以及运行平台
+获取系统信息
 osName:系统名称, 返回值:ios、android、windows、macos、linux
 platform:运行平台, 返回值:app、web、mp-weixin 等等 参考文档:https://uniapp.dcloud.net.cn/api/system/info.html#uniplatform
+safeAreaTopHeight:顶部安全区域高度(单位px)
+safeAreaBottomHeight:底部安全区域高度(单位px)
 */
 export const getSystemInfo = function () {
 	let system = uni.getSystemInfoSync();
+	let safeAreaBottomHeight = 0;
+	if (system.osName == 'ios') {
+		safeAreaBottomHeight = system.safeAreaInsets.bottom;
+	} else {
+		safeAreaBottomHeight = system.safeAreaInsets.bottom ? system.safeAreaInsets.bottom : 20;
+	}
 	return {
 		osName: system.osName, // 系统名称
 		platform: system.uniPlatform, // 运行平台
+		safeAreaTopHeight: system.safeAreaInsets.top, // 顶部安全区域高度
+		safeAreaBottomHeight, // 底部安全区域高度
 	};
 };
