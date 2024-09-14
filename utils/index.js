@@ -1,6 +1,7 @@
+import { BASE_URL } from '@/constants.js';
 // 获取图片地址
-export const getImg = function (path) {
-	return '/static/imgs/' + path;
+export const getImgUrl = function (path) {
+	return BASE_URL + path;
 };
 // 下载字体
 export const downloadFont = function () {

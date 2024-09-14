@@ -1,4 +1,5 @@
 import request from './request';
+import { getPagePath } from '@/utils/index.js';
 // 全局配置的请求域名
 import { BASE_URL } from '@/constants.js';
 let baseUrl = BASE_URL;
@@ -158,9 +159,10 @@ $http.requestError = function (e) {
 				title: '当前登录失效，请先登录',
 				icon: 'none',
 			});
+			uni.setStorageSync('path', getPagePath());
 			setTimeout(() => {
 				// 登录失败后清除token 让用户重新进行授权
-				uni.clearStorageSync('token');
+				uni.removeStorageSync('token');
 				uni.removeStorageSync('userInfo');
 				uni.reLaunch({
 					url: '/pages/login/index',

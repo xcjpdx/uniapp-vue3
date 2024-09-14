@@ -1,4 +1,5 @@
 <template>
+	<button @click="go2D">去2D</button>
 	<div style="padding: 20rpx">
 		{{ $t('home.title') }}
 	</div>
@@ -142,6 +143,12 @@
 			});
 		}
 	});
+
+	function go2D() {
+		uni.navigateTo({
+			url: '/pages/home/test/test',
+		});
+	}
 
 	import { changeLocale, getLocaleText } from '@/utils/i18n';
 	function aa() {

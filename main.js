@@ -1,7 +1,7 @@
 import App from './App';
 
 import uviewPlus from 'uview-plus';
-import { getImg } from './utils/index.js';
+import { getImgUrl } from './utils/index.js';
 
 // pinia
 import { setupStore } from './store/index.js';
@@ -31,7 +31,7 @@ import { createSSRApp } from 'vue';
 export function createApp() {
 	const app = createSSRApp(App);
 
-	app.config.globalProperties.$url = getImg;
+	app.config.globalProperties.$imgUrl = getImgUrl;
 
 	// uview-plus
 	app.use(uviewPlus);
