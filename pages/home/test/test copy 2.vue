@@ -50,9 +50,7 @@
 						<div
 							class="edit-region-tool-box"
 							:style="{
-								transform: `translate(${elementList[currentIndex].x - 6}px, ${
-									elementList[currentIndex].y - 6
-								}px) rotate(${elementList[currentIndex].angle}deg)`,
+								transform: `translate(${elementList[currentIndex].x}px, ${elementList[currentIndex].y}px) rotate(${elementList[currentIndex].angle}deg)`,
 							}"
 							@click.stop="startEdit(currentIndex)"
 							@touchstart="(e) => onTouchStart(e, currentIndex)"
@@ -355,8 +353,6 @@
 					indexArr.forEach((item, index) => {
 						elementList.value[item].width = arr[index].width;
 						elementList.value[item].height = arr[index].height;
-						elementList.value[item].toolWidth = arr[index].width;
-						elementList.value[item].toolHeight = arr[index].height;
 					});
 				}
 				resolve();
@@ -429,9 +425,6 @@
 			const deltaY = touch.pageY - initialTouchY;
 			item.x = initialX + deltaX;
 			item.y = initialY + deltaY;
-			if (item.type === 'text') {
-				item.isEdit = true;
-			}
 		}
 	}
 
@@ -495,35 +488,12 @@
 			// 更新初始距离，防止缩放过快或过慢
 			initialDistance = currentDistance;
 
-			if (item.type == 'image') {
-				let oldToolWidth = item.toolWidth;
-				let oldToolHeight = item.toolHeight;
-				item.toolWidth = item.width * item.scale;
-				item.toolHeight = item.height * item.scale;
-				item.x = item.x - (item.toolWidth - oldToolWidth) / 2;
-				item.y = item.y - (item.toolHeight - oldToolHeight) / 2;
-			} else {
-				let oldToolWidth = item.toolWidth;
-				let oldToolHeight = item.toolHeight;
-				let spacing = item.config.fontSize * item.config.letterSpacing;
-				let num = (oldToolWidth - spacing) / item.config.fontSize;
-
-				item.toolWidth = item.width * item.scale;
-				item.toolHeight = item.height * item.scale;
-				item.config.fontSize = (item.toolWidth - spacing) / num;
-				toolTextFontSize.value = item.config.fontSize;
-
-				let widthDifference = item.toolWidth - oldToolWidth;
-				let heightDifference = item.toolHeight - oldToolHeight;
-
-				if (widthDifference > 0) {
-					item.x = item.x - widthDifference / 2;
-					item.y = item.y - heightDifference / 2;
-				} else {
-					item.x = item.x + Math.abs(widthDifference) / 2;
-					item.y = item.y + Math.abs(heightDifference) / 2;
-				}
-			}
+			let oldToolWidth = item.toolWidth;
+			let oldToolHeight = item.toolHeight;
+			item.toolWidth = item.width * item.scale;
+			item.toolHeight = item.height * item.scale;
+			item.x = item.x - (item.toolWidth - oldToolWidth) / 2;
+			item.y = item.y - (item.toolHeight - oldToolHeight) / 2;
 		}
 	}
 
@@ -1020,7 +990,6 @@
 	}
 	// 更新文字素材的位置
 	async function updateTextPosition(data) {
-		return;
 		let oldWidth = data.width;
 		let oldHeight = data.height;
 		await getTextInfo();
@@ -1128,7 +1097,6 @@
 						display: flex;
 						justify-content: center;
 						align-items: center;
-						padding: 6px;
 						image {
 							opacity: 0;
 						}

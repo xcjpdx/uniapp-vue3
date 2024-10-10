@@ -12,14 +12,14 @@
 						:key="index"
 						class="sourceMaterial"
 						:style="{
-							transform: `translate(${item.x}px, ${item.y}px) rotate(${item.angle}deg)`,
+							transform: `translate(${item.x}px, ${item.y}px) scale(${item.scale}) rotate(${item.angle}deg)`,
 							zIndex: item.level,
 						}"
 						@click.stop="startEdit(index)"
 					>
 						<image
 							id="image"
-							:style="{ width: `${item.toolWidth}px`, height: `${item.toolHeight}px` }"
+							:style="{ width: `${item.width}px`, height: `${item.height}px` }"
 							:src="item.sourceMaterial"
 							v-if="item.type === 'image'"
 						/>
@@ -50,9 +50,9 @@
 						<div
 							class="edit-region-tool-box"
 							:style="{
-								transform: `translate(${elementList[currentIndex].x - 6}px, ${
-									elementList[currentIndex].y - 6
-								}px) rotate(${elementList[currentIndex].angle}deg)`,
+								width: `${editRegionToolCoordinate.width}px`,
+								height: `${editRegionToolCoordinate.height}px`,
+								transform: `translate(${editRegionToolCoordinate.x}px, ${editRegionToolCoordinate.y}px) scale(${editRegionToolCoordinate.scale}) rotate(${editRegionToolCoordinate.angle}deg)`,
 							}"
 							@click.stop="startEdit(currentIndex)"
 							@touchstart="(e) => onTouchStart(e, currentIndex)"
@@ -82,37 +82,6 @@
 								class="tip-operation"
 								@click.stop="operation(elementList[currentIndex], currentIndex)"
 								>{{ elementList[currentIndex].type === 'image' ? '替换' : '编辑' }}</view
-							>
-							<image
-								id="image"
-								:style="{
-									width: `${elementList[currentIndex].toolWidth}px`,
-									height: `${elementList[currentIndex].toolHeight}px`,
-								}"
-								:src="elementList[currentIndex].sourceMaterial"
-								v-if="elementList[currentIndex].type === 'image'"
-							/>
-							<text
-								id="text"
-								:style="{
-									'font-family': elementList[currentIndex].config.fontFamily,
-									color: elementList[currentIndex].config.color,
-									'font-weight': elementList[currentIndex].config.fontWeight ? 'bold' : 'normal',
-									'font-style': elementList[currentIndex].config.italic ? 'italic' : 'normal',
-									'border-bottom': elementList[currentIndex].config.textDecoration
-										? '1px solid #000'
-										: '',
-									'padding-bottom': elementList[currentIndex].config.textDecoration ? '5px' : '',
-									'font-size': `${elementList[currentIndex].config.fontSize}px`,
-									'writing-mode': elementList[currentIndex].config.writingDirection,
-									'letter-spacing': `${elementList[currentIndex].config.letterSpacing}px`,
-									'text-align': elementList[currentIndex].config.textAlign,
-									transform: `rotateX(${
-										elementList[currentIndex].config.xFlip ? '180deg' : '0deg'
-									}) rotateY(${elementList[currentIndex].config.yFlip ? '180deg' : '0deg'});`,
-								}"
-								v-if="elementList[currentIndex].type === 'text'"
-								>{{ elementList[currentIndex].sourceMaterial }}</text
 							>
 						</div>
 					</div>
@@ -324,6 +293,33 @@
 
 	const elementList = ref([]);
 
+	const editRegionToolCoordinate = ref({ width: 0, height: 0, x: 0, y: 0, scale: 1, angle: 0 });
+	// 跟新编辑区域工具信息
+	function updateEditRegionToolCoordinate(data, type) {
+		if (data.width) {
+			editRegionToolCoordinate.value.width = data.width + 10;
+		}
+		if (data.height) {
+			let num = type == 'image' ? 10 : 20;
+			editRegionToolCoordinate.value.height = data.height + num;
+		}
+		if (data.x) {
+			editRegionToolCoordinate.value.x = data.x - 5;
+		}
+		if (data.y) {
+			let num = type == 'image' ? 5 : 10;
+			editRegionToolCoordinate.value.y = data.y - num;
+		}
+		if (data.scale) {
+			editRegionToolCoordinate.value.scale = data.scale;
+		}
+		if (data.angle) {
+			editRegionToolCoordinate.value.angle = data.angle;
+		} else if (data.angle === 0) {
+			editRegionToolCoordinate.value.angle = 0;
+		}
+	}
+
 	watch(
 		() => elementList.value.length,
 		async (val) => {
@@ -355,8 +351,6 @@
 					indexArr.forEach((item, index) => {
 						elementList.value[item].width = arr[index].width;
 						elementList.value[item].height = arr[index].height;
-						elementList.value[item].toolWidth = arr[index].width;
-						elementList.value[item].toolHeight = arr[index].height;
 					});
 				}
 				resolve();
@@ -381,6 +375,23 @@
 	// 开始编辑
 	async function startEdit(index) {
 		await getEditRegionInfo();
+		let data = elementList.value[index];
+
+		let width = data.width * data.scale;
+		let height = data.height * data.scale;
+		let widthDifference = width - data.width;
+		let heightDifference = height - data.height;
+		let x = 0;
+		let y = 0;
+		if (widthDifference > 0) {
+			x = data.x - widthDifference / 2;
+			y = data.y - heightDifference / 2;
+		} else {
+			x = data.x + Math.abs(widthDifference) / 2;
+			y = data.y + Math.abs(heightDifference) / 2;
+		}
+		updateEditRegionToolCoordinate({ x, y, width, height, angle: data.angle }, data.type);
+
 		currentIndex.value = index;
 	}
 
@@ -429,9 +440,24 @@
 			const deltaY = touch.pageY - initialTouchY;
 			item.x = initialX + deltaX;
 			item.y = initialY + deltaY;
-			if (item.type === 'text') {
+
+			let width = item.width * item.scale;
+			let height = item.height * item.scale;
+			let widthDifference = width - item.width;
+			let heightDifference = height - item.height;
+			let x = 0;
+			let y = 0;
+			if (widthDifference > 0) {
+				x = item.x - widthDifference / 2;
+				y = item.y - heightDifference / 2;
+			} else {
+				x = item.x + Math.abs(widthDifference) / 2;
+				y = item.y + Math.abs(heightDifference) / 2;
+			}
+			if (item.type == 'text') {
 				item.isEdit = true;
 			}
+			updateEditRegionToolCoordinate({ x, y, width, height }, item.type);
 		}
 	}
 
@@ -466,6 +492,7 @@
 			const currentAngle = calculateAngle(touch.pageX, touch.pageY, centerX, centerY);
 			item.angle += currentAngle - initialAngle;
 			initialAngle = currentAngle; // 更新初始角度
+			updateEditRegionToolCoordinate({ angle: item.angle }, item.type);
 		}
 	}
 
@@ -495,35 +522,20 @@
 			// 更新初始距离，防止缩放过快或过慢
 			initialDistance = currentDistance;
 
-			if (item.type == 'image') {
-				let oldToolWidth = item.toolWidth;
-				let oldToolHeight = item.toolHeight;
-				item.toolWidth = item.width * item.scale;
-				item.toolHeight = item.height * item.scale;
-				item.x = item.x - (item.toolWidth - oldToolWidth) / 2;
-				item.y = item.y - (item.toolHeight - oldToolHeight) / 2;
+			let width = item.width * item.scale;
+			let height = item.height * item.scale;
+			let widthDifference = width - item.width;
+			let heightDifference = height - item.height;
+			let x = 0;
+			let y = 0;
+			if (widthDifference > 0) {
+				x = item.x - widthDifference / 2;
+				y = item.y - heightDifference / 2;
 			} else {
-				let oldToolWidth = item.toolWidth;
-				let oldToolHeight = item.toolHeight;
-				let spacing = item.config.fontSize * item.config.letterSpacing;
-				let num = (oldToolWidth - spacing) / item.config.fontSize;
-
-				item.toolWidth = item.width * item.scale;
-				item.toolHeight = item.height * item.scale;
-				item.config.fontSize = (item.toolWidth - spacing) / num;
-				toolTextFontSize.value = item.config.fontSize;
-
-				let widthDifference = item.toolWidth - oldToolWidth;
-				let heightDifference = item.toolHeight - oldToolHeight;
-
-				if (widthDifference > 0) {
-					item.x = item.x - widthDifference / 2;
-					item.y = item.y - heightDifference / 2;
-				} else {
-					item.x = item.x + Math.abs(widthDifference) / 2;
-					item.y = item.y + Math.abs(heightDifference) / 2;
-				}
+				x = item.x + Math.abs(widthDifference) / 2;
+				y = item.y + Math.abs(heightDifference) / 2;
 			}
+			updateEditRegionToolCoordinate({ x, y, width, height }, item.type);
 		}
 	}
 
@@ -724,9 +736,12 @@
 			level,
 			x,
 			y,
-			toolWidth: item.width,
-			toolHeight: item.height,
 		});
+
+		updateEditRegionToolCoordinate(
+			{ x, y, width: item.width, height: item.height, scale: item.scale, angle: item.angle },
+			'image'
+		);
 
 		await nextTick();
 		currentIndex.value = elementList.value.length - 1;
@@ -998,6 +1013,7 @@
 		elementList.value.push(item);
 
 		await nextTick();
+		updateEditRegionToolCoordinate({ x, y, width: 10, height: 20, scale: 1, angle: 0 }, 'text');
 		currentIndex.value = elementList.value.length - 1;
 	}
 	const toolTextTitle = ref('');
@@ -1017,10 +1033,10 @@
 		let y = editRegionInfo.height / 2 - data.height / 2;
 		data.x = x;
 		data.y = y;
+		updateEditRegionToolCoordinate({ x, y, width: data.width, height: data.height }, 'text');
 	}
 	// 更新文字素材的位置
 	async function updateTextPosition(data) {
-		return;
 		let oldWidth = data.width;
 		let oldHeight = data.height;
 		await getTextInfo();
@@ -1035,6 +1051,8 @@
 			x = data.x + Math.abs(widthDifference) / 2;
 			y = data.y + Math.abs(heightDifference) / 2;
 		}
+		console.log(data);
+		updateEditRegionToolCoordinate({ x, y, width: data.width, height: data.height }, 'text');
 	}
 
 	// 点击工具栏的图片
@@ -1123,19 +1141,6 @@
 					.edit-region-tool-box {
 						border: 1px solid #fff;
 						position: absolute;
-						top: 0;
-						left: 0;
-						display: flex;
-						justify-content: center;
-						align-items: center;
-						padding: 6px;
-						image {
-							opacity: 0;
-						}
-						text {
-							opacity: 0;
-							white-space: nowrap;
-						}
 						.tip-delete,
 						.tip-rotate,
 						.tip-scale {

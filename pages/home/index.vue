@@ -387,15 +387,26 @@
 				// 绘制位置
 				left: 85,
 				bottom: 146,
-				text: '预约导乐服务 | 专业的技术、细心的真爱服务我是测试文本我是测试文本我是测试文本', // 文本
+				text: '这是一段测试文本，我会将测试两个字改为其他颜色，其他文字使用指定的文本颜色', // 文本
 				maxLine: 3, // 文本最大行数
 				maxWidth: 306, // 文本最大宽度
 				type: 'fill', // 绘制类型 ： fill：填充，stroke：描边
 				fontSize: 30, // 文本大小
-				lineHeight: 1.2, // 文本行高
+				lineHeight: 1.5, // 文本行高
 				fillStyle: '#333', // 文本颜色
 				italic: false, // 是否斜体
 				bold: false, // 是否加粗
+				underlineColor: '#FBC21C', // 下划线颜色
+				specialTreatment: [
+					{
+						str: '测',
+						color: '#E63241',
+					},
+					{
+						str: '试',
+						color: '#1BA035',
+					},
+				],
 			},
 		},
 		{
@@ -435,6 +446,7 @@
 				italic: true, // 是否斜体
 				bold: true, // 是否加粗
 				fontFamily: 'cursive', // 字体
+				underlineColor: '#E63241', // 是否下划线
 			},
 		},
 	]);

@@ -333,30 +333,69 @@
 			italic,
 			bold,
 			fontFamily,
+			underlineColor,
+			specialTreatment,
 		} = data.drawOptions;
 		ctx.font = `${italic} ${bold} ${fontSize}px ${fontFamily}`;
 		// 兼容部分iOS设备字号不生效问题
 		ctx.setFontSize(fontSize);
-
+		// 获取xy坐标轴一定要在样式后面,因为字号/加粗/斜体会影响宽度和高度
 		data.drawOptions.x = getTextX(data.drawOptions);
 		data.drawOptions.y = getTextY(data.drawOptions);
 		let { x, y } = data.drawOptions;
-
-		switch (type) {
-			case 'fill':
+		let handleTextArr = textHandle(text, maxLine, maxWidth);
+		for (let i = 0; i < handleTextArr.length; i++) {
+			if (type == 'fill') {
 				ctx.fillStyle = fillStyle;
-				let handleTextFill = textHandle(text, maxLine, maxWidth);
-				for (let i = 0; i < handleTextFill.length; i++) {
-					ctx.fillText(handleTextFill[i], x, y + (i + 1) * (fontSize * lineHeight));
-				}
-				break;
-			case 'stroke':
+			} else {
 				ctx.strokeStyle = strokeStyle;
-				let handleTextStroke = textHandle(text, maxLine, maxWidth);
-				for (let i = 0; i < handleTextStroke.length; i++) {
-					ctx.strokeText(handleTextStroke[i], x, y + (i + 1) * (fontSize * lineHeight));
+			}
+			let ny = y + (i + 1) * (fontSize * lineHeight);
+			for (let index = 0; index < handleTextArr[i].length; index++) {
+				// 特殊处理开始
+				if (specialTreatment) {
+					let special = specialTreatment.find((item) => item.str == handleTextArr[i][index]);
+					if (special) {
+						if (type == 'fill') {
+							ctx.fillStyle = special.color;
+						} else {
+							ctx.strokeStyle = special.color;
+						}
+					} else {
+						if (type == 'fill') {
+							ctx.fillStyle = fillStyle;
+						} else {
+							ctx.strokeStyle = strokeStyle;
+						}
+					}
 				}
-				break;
+				// 特殊处理 结束
+				if (index) {
+					let lastTextW = ctx.measureText(handleTextArr[i].slice(0, index)).width;
+					if (type == 'fill') {
+						ctx.fillText(handleTextArr[i][index], x + lastTextW, ny);
+					} else {
+						ctx.strokeText(handleTextArr[i][index], x + lastTextW, ny);
+					}
+				} else {
+					if (type == 'fill') {
+						ctx.fillText(handleTextArr[i][index], x, ny);
+					} else {
+						ctx.strokeText(handleTextArr[i][index], x, ny);
+					}
+				}
+			}
+			// ctx.fillText(handleTextArr[i], x, ny);
+			// ctx.strokeText(handleTextArr[i], x, ny);
+			if (underlineColor) {
+				const textW = ctx.measureText(handleTextArr[i]).width;
+				// 绘制下划线
+				ctx.beginPath();
+				ctx.moveTo(x, ny + 5); // 下划线位置稍低于文本底部
+				ctx.lineTo(x + textW, ny + 5);
+				ctx.strokeStyle = underlineColor;
+				ctx.stroke();
+			}
 		}
 		ctx.draw(true);
 		ctx.restore();
