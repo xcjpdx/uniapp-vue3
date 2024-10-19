@@ -24,14 +24,14 @@ export default defineConfig({
 	},
 
 	// H5服务器代理 解决跨域问题
-	// server: {
-	// 	proxy: {
-	// 		'/proxy': {
-	// 			target: '请求地址',
-	// 			changeOrigin: true,
-	// 			secure: false,
-	// 			rewrite: (path) => path.replace(/^\/proxy/, ''),
-	// 		},
-	// 	},
-	// },
+	server: {
+		proxy: {
+			'/proxy': {
+				target: '请求地址',
+				changeOrigin: true,
+				secure: false,
+				rewrite: (path) => path.replace(/^\/proxy/, ''),
+			},
+		},
+	},
 });

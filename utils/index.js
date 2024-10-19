@@ -9,9 +9,9 @@ export const downloadFont = function () {
 	这种方式是为了区分不同的平台使用不同的字体或者进行更灵活的操作
 	有注意事项,具体请参考：https://uniapp.dcloud.net.cn/api/ui/font.html#loadfontface
 	*/
-	let platform = uni.getSystemInfoSync().platform;
-	console.log('平台', platform);
-	if (platform == 'android') {
+	let osName = uni.getSystemInfoSync().osName;
+	console.log('系统名称', osName);
+	if (osName == 'android') {
 		uni.loadFontFace({
 			global: true,
 			family: '字体包的自定义名称',

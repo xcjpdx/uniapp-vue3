@@ -17,13 +17,6 @@
 			}
 		},
 		{
-			"path": "pages/home/test/test",
-			"style": {
-				"navigationBarTitleText": "测试",
-				"navigationStyle": "default"
-			}
-		},
-		{
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "登录",

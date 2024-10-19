@@ -9,6 +9,3 @@ export const BASE_URL = process.env.NODE_ENV === 'development' ? '/proxy' : '请
 // #ifndef H5
 export const BASE_URL = '请求地址';
 // #endif
-
-// 上传文件地址
-export const BASE_UPLOAD_URL = '';
