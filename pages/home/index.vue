@@ -79,12 +79,12 @@
 			</div>
 		</myTooltip>
 	</div>
-	<div style="padding: 20rpx; width: 200px">
+	<div style="padding: 20rpx">
 		<hideText
 			:text="text"
 			rows="1"
 			:labelStyle="{
-				display: 'none',
+				// display: 'none',
 			}"
 		></hideText>
 	</div>
