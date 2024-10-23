@@ -885,6 +885,7 @@
 			white-space: nowrap;
 			overflow: hidden;
 			text-overflow: ellipsis;
+			// direction: rtl; // 文本从右到左
 		}
 		.other-box-delete {
 			margin-left: 20rpx;
@@ -968,6 +969,7 @@
 					white-space: nowrap;
 					overflow: hidden;
 					text-overflow: ellipsis;
+					// direction: rtl; // 文本从右到左
 				}
 			}
 		}
