@@ -505,7 +505,7 @@
 			} else {
 				let oldToolWidth = item.toolWidth;
 				let oldToolHeight = item.toolHeight;
-				let spacing = item.config.fontSize * item.config.letterSpacing;
+				let spacing = item.config.fontSize + item.config.letterSpacing * 2;
 				let num = (oldToolWidth - spacing) / item.config.fontSize;
 
 				item.toolWidth = item.width * item.scale;

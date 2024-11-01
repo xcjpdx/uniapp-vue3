@@ -1,6 +1,9 @@
 <template>
-	<div class="date-time-box" v-if="props.timeShow" @click="clickMask">
-		<div class="date-time-picker">
+	<div class="date-time-box" v-if="markShow" @click="clickMask">
+		<div
+			class="date-time-picker"
+			:class="{ 'animation-show': props.timeShow, 'animation-hide': !props.timeShow }"
+		>
 			<div class="control-box" v-if="props.showToolbar">
 				<div class="cancel" :style="{ color: props.cancelColor }" @click.stop="cancel">{{
 					props.cancelText
@@ -139,11 +142,17 @@
 	const showHour = computed(() => ['1', '5', '6', '10', '11'].includes(props.type));
 	const showMinute = computed(() => ['1', '5', '6', '10', '12'].includes(props.type));
 
+	const markShow = ref(false); // 遮罩层是否显示
 	watch(
 		() => props.timeShow,
-		() => {
-			if (props.timeShow) {
+		(val) => {
+			if (val) {
 				init();
+				markShow.value = true;
+			} else {
+				setTimeout(() => {
+					markShow.value = false;
+				}, 500);
 			}
 		},
 		{ immediate: true }
@@ -375,6 +384,28 @@
 					align-items: center;
 				}
 			}
+		}
+		@keyframes show {
+			0% {
+				transform: translateY(100%);
+			}
+			100% {
+				transform: translateY(0);
+			}
+		}
+		.animation-show {
+			animation: show 0.5s;
+		}
+		@keyframes hide {
+			0% {
+				transform: translateY(0);
+			}
+			100% {
+				transform: translateY(100%);
+			}
+		}
+		.animation-hide {
+			animation: hide 0.5s;
 		}
 	}
 </style>
