@@ -102,8 +102,6 @@
 	// 安卓更新App处理函数
 	function AndroidHandle(downAppUrl) {
 		// 去应用市场更新
-		// plus.runtime.openURL(data.shichangurl);
-		// plus.runtime.restart();
 		// jumpToAppMarket();
 
 		// 创建下载任务
