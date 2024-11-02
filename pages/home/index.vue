@@ -1,4 +1,5 @@
 <template>
+	<checkUpdate></checkUpdate>
 	<button @click="go2D">去2D</button>
 	<div style="padding: 20rpx">
 		{{ $t('home.title') }}
@@ -11,8 +12,8 @@
 			url="https://pmcctestapi.wsandos.com/common/file/upload"
 			accept="all"
 			:multiple="true"
-			maxSize="0.02"
-			maxSizeAll="0.2"
+			maxSize="50"
+			maxSizeAll="100"
 			v-model:fileList="fileList"
 		></myUpload>
 		<button @click="viewFileList">点击查看文件列表</button>
@@ -143,6 +144,8 @@
 			});
 		}
 	});
+
+	import checkUpdate from './checkUpdate.vue';
 
 	function go2D() {
 		uni.navigateTo({
