@@ -146,7 +146,7 @@
 
 	function go2D() {
 		uni.navigateTo({
-			url: '/pages/home/test/test',
+			url: '/pages/home/draw2D',
 		});
 	}
 

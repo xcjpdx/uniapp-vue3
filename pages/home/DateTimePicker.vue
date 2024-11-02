@@ -262,18 +262,6 @@
 		emit('update:currentTime', timestamp);
 		emit('update:timeShow', false);
 	}
-	// 获取选中时间的毫秒数以及格式化后的展示时间
-	// function getSelectedTime() {
-	// 	const selectedDate = new Date(year.value, month.value - 1, day.value, hour.value, minute.value);
-	// 	const timestamp = selectedDate.getTime();
-	// 	const data_year = formatNumber(year.value);
-	// 	const data_month = formatNumber(month.value);
-	// 	const data_day = formatNumber(day.value);
-	// 	const data_hours = formatNumber(hour.value);
-	// 	const data_minutes = formatNumber(minute.value);
-	// 	const formattedDate = `${data_year}-${data_month}-${data_day} ${data_hours}:${data_minutes}`;
-	// 	return { timestamp, formattedDate };
-	// }
 	function getSelectedTime() {
 		const selectedDate = new Date(year.value, month.value - 1, day.value, hour.value, minute.value);
 		const timestamp = selectedDate.getTime();
