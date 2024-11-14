@@ -1,5 +1,5 @@
 <template>
-	<checkUpdate></checkUpdate>
+	<div> </div>
 </template>
 
 <script setup>
@@ -9,8 +9,6 @@
 
 	onMounted(() => {});
 	onLoad((res) => {});
-
-	import checkUpdate from './checkUpdate.vue';
 </script>
 
 <style lang="scss" scoped></style>

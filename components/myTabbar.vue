@@ -1,5 +1,5 @@
 <template>
-	<view class="tabbar-box" :style="{ 'padding-bottom': osName === 'ios' ? '' : '20px' }">
+	<view class="tabbar-box">
 		<view
 			class="tabbar-box-item"
 			v-for="(item, index) in tabbarList"
@@ -27,7 +27,6 @@
 		},
 	});
 
-	let osName = uni.getSystemInfoSync().osName;
 	let tabbarHeight = ref('');
 	onMounted(() => {
 		// 获取 tabbar-box 的高度
@@ -74,9 +73,9 @@
 		left: 0;
 		padding: 20rpx;
 		// 兼容 IOS<11.2
-		padding-bottom: constant(safe-area-inset-bottom);
+		padding-bottom: constant(safe-area-inset-bottom, 20px);
 		// 兼容 IOS>=11.2
-		padding-bottom: env(safe-area-inset-bottom);
+		padding-bottom: env(safe-area-inset-bottom, 20px);
 		background: #fff;
 		box-shadow: 0rpx -1rpx 21rpx 0rpx rgba(131, 128, 127, 0.1);
 		border-radius: 20rpx;
