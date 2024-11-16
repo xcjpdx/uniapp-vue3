@@ -12,15 +12,15 @@
 				<div class="navbar-default">
 					<div class="default-left" v-if="props.type != 'none'">
 						<view class="default-all" v-if="props.type == 'all'">
-							<u-icon name="arrow-left" color="#fff" size="40" @click="goBack"></u-icon>
+							<u-icon name="arrow-left" color="#fff" size="20" @click="goBack"></u-icon>
 							<view class="default-line"></view>
-							<u-icon name="home" color="#fff" size="40" @click="goHome"></u-icon>
+							<u-icon name="home" color="#fff" size="20" @click="goHome"></u-icon>
 						</view>
 						<view class="default-back" v-if="props.type == 'back'">
-							<u-icon name="arrow-left" color="#fff" size="30" @click="goBack"></u-icon>
+							<u-icon name="arrow-left" color="#fff" size="20" @click="goBack"></u-icon>
 						</view>
 						<view class="default-home" v-if="props.type == 'home'">
-							<u-icon name="home-fill" color="#fff" size="30" @click="goHome"></u-icon>
+							<u-icon name="home-fill" color="#fff" size="20" @click="goHome"></u-icon>
 						</view>
 					</div>
 					<view class="default-title">{{ props.title }}</view>
