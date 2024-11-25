@@ -163,3 +163,48 @@ export const getSystemInfo = function () {
 		safeAreaBottomHeight, // 底部安全区域高度
 	};
 };
+/**
+ * 防抖函数
+ * @param {Function} fn 需要执行的函数
+ * @param {Number} delay 间隔时间(毫秒)
+ * @param {Boolean} immediate 是否立即执行
+ * @returns {Function} 防抖处理后的函数
+ */
+export const debounce = (fn, delay = 300, immediate = false) => {
+	let timer = null;
+	let isFirst = true; // 用于判断是否是第一次调用
+
+	return function (...args) {
+		// 清除之前的定时器
+		if (timer) clearTimeout(timer);
+
+		// 如果是第一次调用且需要立即执行
+		if (isFirst && immediate) {
+			fn.apply(this, args);
+			isFirst = false;
+		}
+
+		// 设置新的定时器，执行最后一次调用
+		timer = setTimeout(() => {
+			fn.apply(this, args);
+			timer = null;
+		}, delay);
+	};
+};
+/**
+ * 节流函数
+ * @param {Function} fn 需要执行的函数
+ * @param {Number} limit 间隔时间(毫秒)
+ * @returns {Function} 节流处理后的函数
+ */
+export const throttle = (fn, limit = 300) => {
+	let lastCall = 0;
+
+	return function (...args) {
+		const now = Date.now();
+		if (now - lastCall >= limit) {
+			lastCall = now;
+			return fn.apply(this, args);
+		}
+	};
+};
