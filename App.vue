@@ -12,9 +12,6 @@
 </script>
 
 <style lang="scss">
-	/* 注意要写在第一行，同时给style标签加入lang="scss"属性 */
-	@import 'uview-plus/index.scss';
-
 	/*
 	引入字体 字体包的地址可本地地址可在线地址
 	使用:在需要用到的元素的css样式中:font-family: 字体包的自定义名称;
