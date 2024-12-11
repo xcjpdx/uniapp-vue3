@@ -16,9 +16,8 @@
 
 <script setup>
 	import { ref, onMounted, getCurrentInstance } from 'vue';
-	import { onLoad, onReady } from '@dcloudio/uni-app';
+	import { onLoad } from '@dcloudio/uni-app';
 	const { proxy } = getCurrentInstance();
-	let instance = proxy;
 
 	const osName = uni.getSystemInfoSync().osName;
 
@@ -32,7 +31,7 @@
 	let tabbarHeight = ref('');
 	onMounted(() => {
 		// 获取 tabbar-box 的高度
-		let query = uni.createSelectorQuery().in(instance);
+		let query = uni.createSelectorQuery().in(proxy);
 		query
 			.select('.tabbar-box')
 			.boundingClientRect((data) => {

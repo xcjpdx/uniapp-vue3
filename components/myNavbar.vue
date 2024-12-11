@@ -12,15 +12,15 @@
 				<div class="navbar-default">
 					<div class="default-left" v-if="props.type != 'none'">
 						<view class="default-all" v-if="props.type == 'all'">
-							<u-icon name="arrow-left" color="#fff" size="20" @click="goBack"></u-icon>
+							<text @click="goBack">返回</text>
 							<view class="default-line"></view>
-							<u-icon name="home" color="#fff" size="20" @click="goHome"></u-icon>
+							<text @click="goHome">首页</text>
 						</view>
 						<view class="default-back" v-if="props.type == 'back'">
-							<u-icon name="arrow-left" color="#fff" size="20" @click="goBack"></u-icon>
+							<text @click="goBack">返回</text>
 						</view>
 						<view class="default-home" v-if="props.type == 'home'">
-							<u-icon name="home-fill" color="#fff" size="20" @click="goHome"></u-icon>
+							<text @click="goHome">首页</text>
 						</view>
 					</div>
 					<view class="default-title">{{ props.title }}</view>
@@ -29,7 +29,7 @@
 		</view>
 	</view>
 	<!-- 占位 -->
-	<view :style="{ height: statusBarHeight + navBarHeight + 'px' }"></view>
+	<view :style="{ height: placeholderHeight + 'px' }"></view>
 </template>
 <script setup>
 	import { ref, onMounted, computed, watchEffect } from 'vue';
@@ -57,21 +57,59 @@
 	let statusBarHeight = ref(0);
 	let navBarHeight = ref(0);
 
-	// 获取状态栏高度
+	// 计算占位盒子高度
+	const placeholderHeight = computed(() => {
+		// #ifdef MP-WEIXIN
+		return statusBarHeight.value + navBarHeight.value;
+		// #endif
+
+		// #ifdef APP-PLUS
+		const system = uni.getSystemInfoSync();
+		// 安卓
+		if (system.platform.toLowerCase() === 'android') {
+			return statusBarHeight.value + navBarHeight.value;
+		}
+		// iOS
+		return statusBarHeight.value + navBarHeight.value;
+		// #endif
+
+		// #ifdef H5
+		return statusBarHeight.value + navBarHeight.value;
+		// #endif
+	});
+
+	// 获取状态栏高度优化
 	function geStatusBarHeight() {
-		statusBarHeight.value = uni.getSystemInfoSync()['statusBarHeight'];
+		const sys = uni.getSystemInfoSync();
+		// #ifdef H5
+		statusBarHeight.value = 0;
+		// #endif
+
+		// #ifdef MP-WEIXIN || APP-PLUS
+		statusBarHeight.value = sys.statusBarHeight;
+		// #endif
 	}
-	// 获取导航栏高度
+
+	// 获取导航栏高度优化
 	function getNavBarHeight() {
 		// #ifdef MP-WEIXIN
-		let menuButtonInfo = uni.getMenuButtonBoundingClientRect(); // 胶囊信息
-		// 导航栏高度 = 胶囊高度 + 上间距 + 下间距 + 微调
+		const menuButtonInfo = uni.getMenuButtonBoundingClientRect();
 		navBarHeight.value =
 			menuButtonInfo.height +
-			(menuButtonInfo.top - uni.getSystemInfoSync()['statusBarHeight']) * 2 +
+			(menuButtonInfo.top - uni.getSystemInfoSync().statusBarHeight) * 2 +
 			2;
 		// #endif
-		// #ifdef APP-PLUS || H5
+
+		// #ifdef APP-PLUS
+		const system = uni.getSystemInfoSync();
+		if (system.platform.toLowerCase() === 'android') {
+			navBarHeight.value = 48;
+		} else {
+			navBarHeight.value = 44;
+		}
+		// #endif
+
+		// #ifdef H5
 		navBarHeight.value = 44;
 		// #endif
 	}
