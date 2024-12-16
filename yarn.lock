@@ -172,6 +172,11 @@
     "@babel/helper-validator-identifier" "^7.25.7"
     to-fast-properties "^2.0.0"
 
+"@climblee/uv-ui@^1.1.20":
+  version "1.1.20"
+  resolved "https://registry.npmmirror.com/@climblee/uv-ui/-/uv-ui-1.1.20.tgz"
+  integrity sha512-jkyesHJsPJkF4Nap9ZmG1/ibKlxXA5M8+ntqKXwwloIsYSYL5SOKb0gyPj17aBOU1PkJpmeiZ8PwnTolhK2/HA==
+
 "@intlify/core-base@10.0.5":
   version "10.0.5"
   resolved "https://registry.npmmirror.com/@intlify/core-base/-/core-base-10.0.5.tgz"
@@ -1308,7 +1313,7 @@ vue-i18n@^10.0.5:
     "@intlify/shared" "10.0.5"
     "@vue/devtools-api" "^6.5.0"
 
-"vue@^2.7.0 || ^3.5.11", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@>=3.2.47, vue@3.5.11:
+"vue@^2.7.0 || ^3.5.11", vue@^3.0.0, "vue@^3.0.0-0 || ^2.6.0", vue@3.5.11:
   version "3.5.11"
   resolved "https://registry.npmmirror.com/vue/-/vue-3.5.11.tgz"
   integrity sha512-/8Wurrd9J3lb72FTQS7gRMNQD4nztTtKPmuDuPuhqXmmpD6+skVjAeahNpVzsuky6Sy9gy7wn8UadqPtt9SQIg==
@@ -1335,11 +1340,6 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
-
-wot-design-uni@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.npmmirror.com/wot-design-uni/-/wot-design-uni-1.4.0.tgz"
-  integrity sha512-h6sjrgfg7mP0nJwGTiHn/iTLPFyRswMpQV6MKhWN3skTnXe+FAyndvtXofpXp+uLkTXefGfw5BPI0uuCMD874w==
 
 yallist@^3.0.2:
   version "3.1.1"
