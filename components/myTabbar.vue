@@ -1,5 +1,5 @@
 <template>
-	<view class="tabbar-box" :style="{ 'padding-bottom': osName == 'ios' ? '' : '30rpx' }">
+	<view class="tabbar-box">
 		<view
 			class="tabbar-box-item"
 			v-for="(item, index) in tabbarList"
@@ -18,8 +18,6 @@
 	import { ref, onMounted, getCurrentInstance } from 'vue';
 	import { onLoad } from '@dcloudio/uni-app';
 	const { proxy } = getCurrentInstance();
-
-	const osName = uni.getSystemInfoSync().osName;
 
 	const props = defineProps({
 		type: {
@@ -73,6 +71,8 @@
 		bottom: 0;
 		left: 0;
 		padding: 20rpx;
+		// 安卓
+		padding-bottom: 30rpx;
 		// 兼容 IOS<11.2
 		padding-bottom: constant(safe-area-inset-bottom);
 		// 兼容 IOS>=11.2
